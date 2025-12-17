@@ -2,22 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>North Pole Feelings Academy</title>
     <style>
-        body { font-family: 'Comic Sans MS', cursive; background: #f0fdf4; text-align: center; }
-        .menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 50px; }
-        .character-link { text-decoration: none; color: black; background: white; padding: 20px; border-radius: 20px; border: 3px solid #d42426; width: 150px; }
-        img { width: 100px; }
+        body { 
+            font-family: 'Comic Sans MS', cursive, sans-serif; 
+            background-color: #f0fdf4; 
+            color: #1a3a3a; 
+            text-align: center; 
+            padding: 20px;
+        }
+        .header { 
+            background: #d42426; 
+            color: white; 
+            padding: 30px; 
+            border-radius: 30px; 
+            margin-bottom: 40px;
+            border: 5px solid #f8b229;
+        }
+        .menu-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: 20px; 
+            max-width: 800px; 
+            margin: auto; 
+        }
+        .char-card { 
+            background: white; 
+            text-decoration: none; 
+            color: #165b33; 
+            padding: 20px; 
+            border-radius: 20px; 
+            border: 4px solid #165b33; 
+            transition: transform 0.2s;
+            display: block;
+        }
+        .char-card:hover { 
+            transform: scale(1.05); 
+            background: #e8f5e9;
+        }
+        img { 
+            width: 120px; 
+            height: auto; 
+            margin-bottom: 10px; 
+        }
+        h2 { font-size: 1.2rem; margin: 0; }
+        .intro-text { font-size: 1.2rem; margin-bottom: 30px; color: #2c3e50; }
     </style>
 </head>
 <body>
-    <h1>🎄 North Pole Feelings Academy 🎄</h1>
-    <p>Click a character to start your mission!</p>
-    <div class="menu">
-        <a href="santa.html" class="character-link"><img src="santa_character.jpg"><br>Santa</a>
-        <a href="reindeer.html" class="character-link"><img src="reindeer_character.jpg"><br>Reindeer</a>
-        <a href="elf.html" class="character-link"><img src="elf_character.jpg"><br>Elf</a>
-        <a href="bear.html" class="character-link"><img src="polar_bear.jpg"><br>Polar Bear</a>
+
+    <div class="header">
+        <h1>🎄 North Pole Feelings Academy 🎄</h1>
+        <p>A Special Mission for Every Character!</p>
     </div>
+
+    <p class="intro-text">Welcome, Little Learner! Click on a character to start your lesson on <strong>Self-Control</strong> and <strong>Feelings</strong>.</p>
+
+    <div class="menu-grid">
+        <a href="santa.html" class="char-card">
+            <img src="santa_character.jpg" alt="Santa">
+            <h2>Santa's Sillies</h2>
+        </a>
+
+        <a href="reindeer.html" class="char-card">
+            <img src="reindeer_character.jpg" alt="Reindeer">
+            <h2>Rudolph's Labels</h2>
+        </a>
+
+        <a href="elf.html" class="char-card">
+            <img src="elf_character.jpg" alt="Elf">
+            <h2>Elf Workshop Tools</h2>
+        </a>
+
+        <a href="bear.html" class="char-card">
+            <img src="polar_bear.jpg" alt="Polar Bear">
+            <h2>The Snowy Toolbox</h2>
+        </a>
+    </div>
+
+    <footer style="margin-top: 50px; font-size: 0.9rem; color: #7f8c8d;">
+        <p>Learning Standard: 30.A Identify and manage emotions & behavior</p>
+    </footer>
+
 </body>
 </html>
