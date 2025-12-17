@@ -3,139 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santa's Jingle Quest</title>
+    <title>Santa's Silly vs. Smart Sleigh Ride</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         body { 
-            font-family: 'Comic Sans MS', cursive; 
-            background: linear-gradient(to bottom, #ff0000, #d42426); 
-            color: white; 
-            text-align: center; 
-            padding: 20px; 
-            min-height: 100vh;
+            font-family: 'Fredoka One', cursive; /* A fun, kid-friendly font */
+            background: linear-gradient(to bottom, #d42426, #a10000); 
+            color: white; text-align: center; padding: 20px; overflow: hidden;
+            min-height: 100vh; display: flex; flex-direction: column;
         }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
         .container { 
-            background: rgba(255, 255, 255, 0.9); 
-            border-radius: 30px; 
-            padding: 30px; 
-            max-width: 600px; 
-            margin: auto; 
+            background: rgba(255, 255, 255, 0.98); 
+            border-radius: 50px; padding: 40px; max-width: 900px; 
+            margin: auto; color: #333;
+            border: 10px solid #f8b229; 
+            box-shadow: 0 25px 0 #8B0000, 0 0 40px rgba(0,0,0,0.4);
+            position: relative; z-index: 1;
+        }
+        #santa-sleigh { 
+            position: absolute; left: 10px; top: -50px; width: 150px; 
+            transition: left 0.1s linear, transform 0.2s; /* Smooth sleigh movement */
+            transform: rotate(5deg); /* A little tilt for fun */
+            z-index: 2;
+        }
+        #santa-img { 
+            width: 100%; height: auto; display: block;
+            filter: drop-shadow(0 8px 8px rgba(0,0,0,0.3));
+        }
+        h1 { font-size: 3.8rem; color: #d42426; text-shadow: 3px 3px #f8b229; margin-bottom: 20px; }
+        .question-text { font-size: 2.5rem; margin: 30px 0; line-height: 1.3; font-weight: bold; color: #333; }
+        
+        /* Slider Styling */
+        .slider-container {
+            position: relative; width: 90%; height: 50px; margin: 40px auto 20px;
+            background: linear-gradient(to right, #ffeb3b 0%, #4CAF50 100%); /* Silly yellow to Smart green */
+            border-radius: 50px; border: 5px solid #ccc;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 1.5rem;
             color: #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px white;
         }
-        /* The Jiggle Animation */
-        @keyframes jiggle {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        .jiggle { animation: jiggle 0.5s; animation-iteration-count: infinite; }
+        .slider-container::before { content: "🤪 Silly"; position: absolute; left: 20px; }
+        .slider-container::after { content: "🧠 Smart"; position: absolute; right: 20px; }
         
-        #santa-img { width: 200px; transition: transform 0.3s; }
-        
-        .question-box { margin-top: 20px; padding: 15px; background: #fff5f5; border-radius: 20px; border: 3px dashed #d42426; }
-        .btn { 
-            display: block; width: 100%; padding: 15px; margin: 10px 0; 
-            border: none; border-radius: 50px; cursor: pointer; 
-            font-size: 18px; font-weight: bold; transition: 0.2s;
-            box-shadow: 0 4px #999;
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%; height: 100%; position: absolute;
+            background: transparent; outline: none; z-index: 3;
         }
-        .btn:active { box-shadow: 0 0 #666; transform: translateY(4px); }
-        .silly { background: #ffeb3b; color: #333; }
-        .calm { background: #4caf50; color: white; }
-        .back-btn { background: #555; color: white; margin-top: 20px; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 80px; width: 80px; border-radius: 50%;
+            background: url('santa_character.jpg') center center / cover no-repeat;
+            cursor: grab; border: 5px solid #d42426;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            margin-top: -15px; /* Adjust to center the thumb vertically */
+        }
+        input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; }
+
+        /* Cookie Jar Tracker */
+        #cookie-jar-tracker {
+            position: fixed; left: 20px; top: 100px; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+            background: rgba(255,255,255,0.8); padding: 15px; border-radius: 20px;
+            border: 4px dashed #8B4513; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        #cookie-jar { font-size: 4rem; margin-bottom: 10px; }
+        .cookie { font-size: 2.5rem; opacity: 0.3; transition: opacity 0.5s, transform 0.5s; }
+        .cookie.active { opacity: 1; transform: scale(1.3) rotate(-10deg); animation: cookie-fly 0.8s forwards; }
+
+        @keyframes cookie-fly {
+            0% { opacity: 0; transform: scale(0.5) translate(0, 50px); }
+            50% { opacity: 1; transform: scale(1.5) translate(10px, -20px); }
+            100% { opacity: 1; transform: scale(1) translate(0, 0); }
+        }
+
+        .back-btn { 
+            background: #555; color: white; font-size: 1.5rem; padding: 15px 30px; 
+            border-radius: 50px; text-decoration: none; margin-top: 40px;
+            display: inline-block; box-shadow: 0 5px #333;
+        }
+        .back-btn:hover { background: #777; }
+
+        /* SweetAlert2 Customizations */
+        .swal2-title { font-size: 3.5em !important; font-family: 'Fredoka One', cursive !important; color: #d42426 !important; text-shadow: 2px 2px #f8b229; }
+        .swal2-html-container { font-size: 2em !important; font-family: 'Comic Sans MS', cursive !important; }
+        .swal2-popup { border-radius: 50px !important; border: 10px solid #f8b229 !important; box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important; background: linear-gradient(180deg, #ffe0b2 0%, #fffde7 100%) !important; }
+        .swal2-confirm.swal2-styled { font-size: 1.8em !important; padding: 15px 30px !important; border-radius: 40px !important; }
+        .swal2-success .swal2-success-line-tip, .swal2-success .swal2-success-line-long { background-color: #4CAF50 !important; }
+        .swal2-success .swal2-success-ring { border-color: #4CAF50 !important; }
+
+        /* Confetti for success */
+        .confetti-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--color);
+            border-radius: 50%;
+            opacity: 0;
+            animation: confetti-fall linear forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <img src="santa_character.jpg" id="santa-img" alt="Santa">
-    <h1 id="title">Santa's Body Cues!</h1>
-    
-    <div id="game-area">
-        <div class="question-box">
-            <p id="question-text">Santa’s tummy is wiggling because he is nervous! He wants to turn his cookies into a "Cookie Slurpy" and pour it in his hat. Should he?</p>
-            <button class="btn silly" onclick="answer(false, 'Uh oh! The slurpy spilled! Now Santa is sticky and has to clean up. That took away his toy-delivery time!')">Yes! Be Silly!</button>
-            <button class="btn calm" onclick="answer(true, 'Ho Ho Ho! Santa took a deep breath. His tummy stopped wiggling and he stayed clean!')">No! Use a Calm Tool</button>
-        </div>
+    <div id="cookie-jar-tracker">
+        <div id="cookie-jar">🍪</div>
+        <div class="cookie" id="cookie-1">✨</div>
+        <div class="cookie" id="cookie-2">✨</div>
+        <div class="cookie" id="cookie-3">✨</div>
+        <div class="cookie" id="cookie-4">✨</div>
+        <div class="cookie" id="cookie-5">✨</div>
     </div>
-    
-    <a href="index.html" class="btn back-btn">⬅ Back to Map</a>
-</div>
+
+    <div class="container animate__animated animate__swing">
+        <h1>Santa's <span style="color:#ffeb3b">Silly</span> vs. <span style="color:#4CAF50">Smart</span> Ride!</h1>
+        
+        <p class="question-text" id="question-display">Santa's tummy is rumbling! He wants to turn his milk and cookies into a "Cookie Slurpy" and pour it in his hat. Silly or Smart?</p>
+        
+        <div class="slider-container">
+            <input type="range" min="0" max="100" value="50" class="slider" id="sleigh-slider">
+            <img src="santa_character.jpg" id="santa-sleigh" alt="Santa's Sleigh">
+        </div>
+        <button class="back-btn" onclick="checkSliderAnswer()">Let's See!</button>
+    </div>
+
+    <a href="index.html" class="back-btn">⬅ Back to Map</a>
+
+    <div id="confetti-container" class="confetti-effect"></div>
 
 <script>
-    let currentStep = 0;
-    const santaImg = document.getElementById('santa-img');
-
+    let cookiesCollected = 0;
     const questions = [
         {
-            q: "Santa feels his heart beating fast like a drum! He wants to jump on the bed until it breaks. Good idea?",
-            silly: "CRASH! The bed broke. Now Santa has nowhere to sleep before the big flight!",
-            calm: "Smart! Santa sat down and counted to 10. His heart slowed down and the bed is safe!"
+            q: "Santa's tummy is rumbling! He wants to turn his milk and cookies into a 'Cookie Slurpy' and pour it in his hat. Silly or Smart?",
+            sillyRange: [0, 49], // Range for silly choice
+            smartRange: [50, 100], // Range for smart choice
+            sillyFeedback: "🤪 Oh no! The slurpy spilled all over the sleigh! Now Santa is sticky and has to clean up instead of delivering toys!",
+            smartFeedback: "🧠 Ho Ho Ho! Santa took a deep breath and drank his milk nicely. His tummy stopped rumbling and the sleigh stayed clean!"
         },
         {
-            q: "Santa has the 'Giggles' so bad he wants to spray whipped cream on the Reindeer! Should he do it?",
-            silly: "Sticky Reindeer can't fly! Now the elves have to give them all baths. We're running late!",
-            calm: "Good job! Santa did a 'Belly Breath' instead. The reindeer are clean and ready!"
+            q: "Santa feels his heart beating fast like a drum! He wants to jump on the bed until it breaks. Silly or Smart?",
+            sillyRange: [0, 49],
+            smartRange: [50, 100],
+            sillyFeedback: "💥 CRASH! The bed broke. Now Santa has nowhere to sleep before the big flight!",
+            smartFeedback: "😴 Ho Ho Ho! Santa sat down and counted to 10. His heart slowed down and the bed is safe!"
         },
         {
-            q: "Santa is frustrated! He wants to throw his list in the snow and stomp on it. What happens?",
-            silly: "Oh no! The list is wet and we don't know who gets the toys! Santa has to go fix it.",
-            calm: "Yay! Santa asked an Elf for help. Asking for help is a great self-control tool!"
+            q: "Santa has the 'Giggles' so bad he wants to spray whipped cream on the Reindeer! Silly or Smart?",
+            sillyRange: [0, 49],
+            smartRange: [50, 100],
+            sillyFeedback: "🚫 Sticky Reindeer can't fly! Now the elves have to give them all baths. We're running late!",
+            smartFeedback: "😂 Ho Ho Ho! Santa did a 'Belly Breath' instead. The reindeer are clean and ready!"
         },
         {
-            q: "Santa wants to shout 'JINGLE BELLS' at the top of his lungs while everyone is sleeping. Should he?",
-            silly: "Wake up! Everyone is grumpy now because they lost their sleep. Being too loud has consequences!",
-            calm: "Peaceful! Santa hummed a quiet tune. Everyone stayed asleep and happy."
+            q: "Santa is frustrated! He wants to throw his list in the snow and stomp on it. Silly or Smart?",
+            sillyRange: [0, 49],
+            smartRange: [50, 100],
+            sillyFeedback: "📜 Oh no! The list is wet and we don't know who gets the toys! Santa has to go fix it.",
+            smartFeedback: "🤝 Ho Ho Ho! Santa asked an Elf for help. Asking for help is a great self-control tool!"
+        },
+        {
+            q: "Santa wants to shout 'JINGLE BELLS' at the top of his lungs while everyone is sleeping. Silly or Smart?",
+            sillyRange: [0, 49],
+            smartRange: [50, 100],
+            sillyFeedback: "😠 Wake up! Everyone is grumpy now because they lost their sleep. Being too loud has consequences!",
+            smartFeedback: "🤫 Ho Ho Ho! Santa hummed a quiet tune. Everyone stayed asleep and happy. Good listening!"
         }
     ];
+    let currentQuestionIndex = 0;
+    const sleighSlider = document.getElementById('sleigh-slider');
+    const santaSleigh = document.getElementById('santa-sleigh');
+    const questionDisplay = document.getElementById('question-display');
+    const cookieJarTracker = document.getElementById('cookie-jar-tracker');
 
-    function answer(isCorrect, message) {
-        if (isCorrect) {
-            santaImg.classList.add('jiggle');
+    // Update sleigh position based on slider
+    sleighSlider.addEventListener('input', () => {
+        const sliderWidth = sleighSlider.offsetWidth;
+        const thumbWidth = 80; // Approximate width of the thumb
+        const range = sleighSlider.max - sleighSlider.min;
+        const value = sleighSlider.value;
+        const percent = (value - sleighSlider.min) / range;
+        
+        // Calculate left position for the center of the thumb
+        let leftPosition = percent * (sliderWidth - thumbWidth);
+        
+        // Adjust to keep the image centered on the thumb
+        santaSleigh.style.left = `${leftPosition + (thumbWidth / 2) - (santaSleigh.offsetWidth / 2)}px`;
+
+        // Little tilt based on direction
+        if (value < 50) {
+            santaSleigh.style.transform = `rotate(${5 - (percent * 10)}deg)`; // Tilt left
+        } else if (value > 50) {
+            santaSleigh.style.transform = `rotate(${5 + ((percent - 0.5) * 10)}deg)`; // Tilt right
+        } else {
+            santaSleigh.style.transform = `rotate(5deg)`; // Default tilt
+        }
+    });
+
+    // Initial position for Santa's sleigh
+    window.addEventListener('load', () => {
+        sleighSlider.value = 50; // Start in the middle
+        const sliderWidth = sleighSlider.offsetWidth;
+        const thumbWidth = 80; 
+        const leftPosition = 0.5 * (sliderWidth - thumbWidth); // 50% for initial
+        santaSleigh.style.left = `${leftPosition + (thumbWidth / 2) - (santaSleigh.offsetWidth / 2)}px`;
+    });
+
+
+    function checkSliderAnswer() {
+        const sliderValue = parseInt(sleighSlider.value);
+        const currentQ = questions[currentQuestionIndex];
+
+        if (sliderValue >= currentQ.smartRange[0] && sliderValue <= currentQ.smartRange[1]) {
+            // Correct (Smart) Answer
+            cookiesCollected++;
+            document.getElementById(`cookie-${cookiesCollected}`).classList.add('active');
+            
             Swal.fire({
-                title: 'Great Choice!',
-                text: message,
-                icon: 'success',
-                confirmButtonText: 'Next Mission!',
-                backdrop: `rgba(0,123,0,0.4)`
+                title: 'HO HO HO! That\'s Smart!',
+                html: `${currentQ.smartFeedback}<br><span style="font-size: 3em;">🍪</span>`,
+                imageUrl: 'santa_character.jpg',
+                imageWidth: 200,
+                confirmButtonText: 'Next Ride!',
+                confirmButtonColor: '#4CAF50',
+                backdrop: `rgba(0,123,0,0.4)`,
+                showClass: { popup: 'animate__animated animate__bounceIn' }
             }).then(() => {
-                santaImg.classList.remove('jiggle');
-                nextQuestion();
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    displayQuestion();
+                    sleighSlider.value = 50; // Reset slider
+                    // Reset sleigh visual position
+                    const sliderWidth = sleighSlider.offsetWidth;
+                    const thumbWidth = 80;
+                    const leftPosition = 0.5 * (sliderWidth - thumbWidth);
+                    santaSleigh.style.left = `${leftPosition + (thumbWidth / 2) - (santaSleigh.offsetWidth / 2)}px`;
+                    santaSleigh.style.transform = `rotate(5deg)`; // Reset tilt
+                } else {
+                    finalCookieReward();
+                }
             });
-        } else {
+        } else if (sliderValue >= currentQ.sillyRange[0] && sliderValue <= currentQ.sillyRange[1]) {
+            // Incorrect (Silly) Answer
             Swal.fire({
-                title: 'Uh Oh...',
-                text: message,
-                icon: 'error',
-                confirmButtonText: 'Try a Calm Tool',
-                backdrop: `rgba(123,0,0,0.4)`
+                title: 'Uh Oh! That\'s Silly!',
+                html: `${currentQ.sillyFeedback}<br><span style="font-size: 3em;">😬</span>`,
+                imageUrl: 'santa_character.jpg',
+                imageWidth: 200,
+                confirmButtonText: 'Try Again, Santa!',
+                confirmButtonColor: '#FFC107',
+                backdrop: `rgba(123,0,0,0.4)`,
+                showClass: { popup: 'animate__animated animate__shakeX' }
+            });
+        } else {
+            // Not quite on a side - nudge them
+            Swal.fire({
+                title: 'Almost There!',
+                html: 'Drag Santa\'s sleigh all the way to <strong>Silly</strong> or <strong>Smart</strong>!',
+                icon: 'info',
+                confirmButtonText: 'Got it!',
+                confirmButtonColor: '#2196F3'
             });
         }
     }
 
-    function nextQuestion() {
-        if (currentStep < questions.length) {
-            const data = questions[currentStep];
-            document.getElementById('question-text').innerText = data.q;
-            // Update buttons
-            document.querySelectorAll('.silly')[0].onclick = () => answer(false, data.silly);
-            document.querySelectorAll('.calm')[0].onclick = () => answer(true, data.calm);
-            currentStep++;
-        } else {
-            Swal.fire('Mission Accomplished!', 'You helped Santa stay in control!', 'success');
-            document.getElementById('game-area').innerHTML = "<h2>Mission Complete! 🌟</h2>";
+    function displayQuestion() {
+        if (currentQuestionIndex < questions.length) {
+            questionDisplay.innerText = questions[currentQuestionIndex].q;
         }
     }
-</script>
 
+    function finalCookieReward() {
+        Swal.fire({
+            title: '🎁 CONGRATULATIONS! 🎁',
+            html: 'You collected all 5 cookies and helped Santa make smart choices!<br>Here is your special Christmas toy!',
+            imageUrl: 'https://cdn.pixabay.com/photo/2013/07/12/17/04/present-151772_960_720.png', // A wrapped present
+            imageWidth: 300,
+            imageHeight: 300,
+            confirmButtonText: 'Yay!',
+            confirmButtonColor: '#d42426',
+            backdrop: `rgba(0,0,0,0.8) url('https://media.giphy.com/media/l4pTcQ4bYg6L5QpYI/giphy.gif') center center / cover no-repeat`, // Confetti gif
+            customClass: {
+                popup: 'animate__animated animate__tada'
+            }
+        });
+        document.getElementById('question-display').innerHTML = "<h2>Mission Complete! 🌟</h2>";
+        sleighSlider.style.display = 'none';
+        document.querySelector('.back-btn').style.display = 'none'; // Hide the 'Let's See' button
+    }
+
+    displayQuestion(); // Load the first question on page load
+</script>
 </body>
 </html>
