@@ -3,25 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polar Bear's Cave</title>
+    <title>Polar Bear's Calming Cave</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        body { font-family: 'Comic Sans MS', cursive; background: #e0f7fa; padding: 20px; text-align: center; }
-        .box { background: white; border: 5px solid #00acc1; border-radius: 20px; padding: 20px; max-width: 500px; margin: auto; }
-        img { width: 150px; }
+        body { 
+            font-family: 'Comic Sans MS', cursive; 
+            background: linear-gradient(to top, #00BCD4, #4DD0E1); /* Icy Blue Gradient */
+            color: white; text-align: center; padding: 20px; overflow: hidden;
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        /* Animated Snow */
+        .snow-particle {
+            position: fixed; top: -10px; z-index: -1; 
+            animation: snowfall linear infinite;
+            font-size: 20px; color: rgba(255,255,255,0.8);
+            pointer-events: none; opacity: 0;
+        }
+        @keyframes snowfall {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(100vh) translateX(50px) scale(0.5); opacity: 0.5; }
+        }
+        .container { 
+            background: rgba(255, 255, 255, 0.95); 
+            border-radius: 50px; padding: 40px; max-width: 850px; 
+            margin: auto; color: #333;
+            border: 10px solid #00acc1; box-shadow: 0 20px 0 #00796B;
+            position: relative; z-index: 1;
+        }
+        #polar-bear-img { 
+            width: 280px; margin-bottom: 20px; 
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.3));
+        }
+        h1 { font-size: 3.5rem; color: #00acc1; margin-bottom: 10px; }
+        .question-text { font-size: 2rem; margin: 25px 0; line-height: 1.3; font-weight: bold; }
+        
+        .tool-grid { 
+            display: grid; grid-template-columns: repeat(2, 1fr); 
+            gap: 25px; margin-top: 30px;
+        }
+        .tool-btn { 
+            padding: 25px; font-size: 1.6rem; border: none; border-radius: 40px; 
+            cursor: pointer; transition: all 0.3s; font-weight: bold;
+            box-shadow: 0 8px #aaa; background: linear-gradient(135deg, #e0f2f7 0%, #bbdefb 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 3px solid #64b5f6;
+        }
+        .tool-btn:active { box-shadow: 0 0 #666; transform: translateY(4px); }
+        .tool-btn:hover { transform: scale(1.08) rotate(-2deg); background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%); }
+        .tool-btn span { font-size: 4.5rem; margin-bottom: 10px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+
+        .back-btn { 
+            background: #555; color: white; font-size: 1.5rem; padding: 15px 30px; 
+            border-radius: 50px; text-decoration: none; margin-top: 40px;
+            display: inline-block; box-shadow: 0 5px #333;
+        }
+        .back-btn:hover { background: #777; }
+
+        /* Presents Tracker */
+        #present-tracker {
+            position: fixed; right: 20px; top: 100px; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .present { 
+            font-size: 3rem; margin-bottom: 5px; opacity: 0.3; 
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .present.active { opacity: 1; transform: scale(1.2) rotate(5deg); animation: bounceIn 0.8s; }
+
+        /* SweetAlert2 custom classes */
+        .swal2-title { font-size: 3em !important; }
+        .swal2-html-container { font-size: 1.8em !important; }
+        .swal2-popup { border-radius: 40px !important; border: 8px solid #f8b229 !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; }
+
+        /* Jiggle for bear */
+        @keyframes bear-jiggle {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 0px) rotate(-2deg); }
+            50% { transform: translate(5px, 0px) rotate(2deg); }
+            75% { transform: translate(-5px, 0px) rotate(-2deg); }
+            100% { transform: translate(0, 0); }
+        }
+        .bear-jiggle { animation: bear-jiggle 0.6s infinite; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <img src="polar_bear.jpg" alt="Polar Bear">
-        <h2>Polar Bear's Snowy Toolbox</h2>
-        <p>Polar Bear is feeling "Overwhelmed" by the cold wind.</p>
-        
-        <h3>Pick a Tool for him:</h3>
-        <button onclick="alert('Great! Belly Breathing makes the Bear feel warm inside!')">Belly Breathing</button>
-        <button onclick="alert('Polar Bear is taking a 5-minute snow-nap. He feels better!')">Take a Break</button>
-        
-        <p><strong>Which one works best for YOU when you are sad?</strong></p>
-        <a href="index.html">⬅ Go Back to Map</a>
+
+    <div id="present-tracker">
+        <div class="present" id="present-1">🎁</div>
+        <div class="present" id="present-2">🎁</div>
+        <div class="present" id="present-3">🎁</div>
+        <div class="present" id="present-4">🎁</div>
+        <div class="present" id="present-5">🎁</div>
     </div>
+
+    <div class="container animate__animated animate__zoomIn">
+        <img src="polar_bear.jpg" id="polar-bear-img" alt="Polar Bear">
+        <h1>Polar Bear's Calming Cave</h1>
+        
+        <p class="question-text" id="question-display">Oh no! Polar Bear's fish fell in the snow! 🐟❄️ He feels angry!</p>
+        
+        <div class="tool-grid" id="tool-options">
+            <button class="tool-btn" data-tool="belly-breathe"><span>🌬️</span> Belly Breath</button>
+            <button class="tool-btn" data-tool="count-ten"><span>🔟</span> Count to 10</button>
+            <button class="tool-btn" data-tool="take-break"><span>🛋️</span> Take a Break</button>
+            <button class="tool-btn" data-tool="positive-talk"><span>✨</span> Happy Thoughts</button>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-btn">⬅ Back to Map</a>
+
+<script>
+    let presentsCollected = 0;
+    const questions = [
+        { 
+            q: "Polar Bear's fish fell in the snow! 🐟❄️ He feels angry!", 
+            correct: "belly-breathe", 
+            feedback: "Great choice! Belly breathing helps cool down angry feelings like a winter breeze! 🌬️" 
+        },
+        { 
+            q: "His friend is being loud and making too much noise! 📣 Polar Bear feels overwhelmed!", 
+            correct: "take-break", 
+            feedback: "Perfect! Taking a break helps Polar Bear find his quiet space again. 🛋️" 
+        },
+        { 
+            q: "He can't find his favorite snowball. He feels frustrated! 😩", 
+            correct: "count-ten", 
+            feedback: "Yes! Counting to 10 helps Polar Bear think before stomping his paws. 🔟" 
+        },
+        { 
+            q: "It's cold and he misses his family. He feels a little sad. 😔", 
+            correct: "positive-talk", 
+            feedback: "Super! Happy thoughts about his family make Polar Bear's heart warm. ✨" 
+        },
+        { 
+            q: "He accidentally tripped and dropped all his berries! 🍓 He feels embarrassed!", 
+            correct: "belly-breathe", 
+            feedback: "Excellent! A big breath helps Polar Bear shake off those embarrassed wiggles. 🌬️" 
+        }
+    ];
+    let currentQuestionIndex = 0;
+    const polarBearImg = document.getElementById('polar-bear-img');
+    const questionDisplay = document.getElementById('question-display');
+    const toolOptions = document.getElementById('tool-options');
+
+    // Add event listeners to tool buttons
+    document.querySelectorAll('.tool-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            checkAnswer(button.dataset.tool);
+        });
+    });
+
+    function makeSnow() {
+        const snow = document.createElement('div');
+        snow.classList.add('snow-particle');
+        snow.innerText = '❄️'; // Use a snowflake emoji
+        snow.style.left = Math.random() * window.innerWidth + 'px';
+        snow.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2 to 5 seconds
+        snow.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(snow);
+
+        // Remove snow particle after animation
+        snow.addEventListener('animationend', () => snow.remove());
+    }
+
+    // Generate snow every 100ms
+    setInterval(makeSnow, 100);
+
+    function checkAnswer(chosenTool) {
+        if (currentQuestionIndex < questions.length) {
+            const currentQ = questions[currentQuestionIndex];
+            if (chosenTool === currentQ.correct) {
+                presentsCollected++;
+                document.getElementById(`present-${presentsCollected}`).classList.add('active');
+                polarBearImg.classList.add('bear-jiggle'); // Make bear jiggle
+                
+                Swal.fire({
+                    title: 'YES! Amazing!',
+                    text: currentQ.feedback,
+                    icon: 'success',
+                    confirmButtonText: 'Next!',
+                    confirmButtonColor: '#00acc1',
+                    showClass: { popup: 'animate__animated animate__tada' } // Pop-up animation
+                }).then(() => {
+                    polarBearImg.classList.remove('bear-jiggle'); // Stop jiggling
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        displayQuestion();
+                    } else {
+                        revealToy();
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Oopsie!',
+                    text: 'That tool might not be the best for this feeling. Try another!',
+                    icon: 'warning',
+                    confirmButtonText: 'Try Again!',
+                    confirmButtonColor: '#f8b229',
+                    showClass: { popup: 'animate__animated animate__shakeX' } // Pop-up animation
+                });
+            }
+        }
+    }
+
+    function displayQuestion() {
+        if (currentQuestionIndex < questions.length) {
+            questionDisplay.innerText = questions[currentQuestionIndex].q;
+        }
+    }
+
+    function revealToy() {
+        Swal.fire({
+            title: '✨ CONGRATULATIONS! ✨',
+            html: 'You helped Polar Bear learn so many calming tools!<br>Here is your special reward!',
+            imageUrl: 'https://cdn.pixabay.com/photo/2016/03/31/19/22/toy-1295328_960_720.png', // A fun toy image from Pixabay
+            imageWidth: 300,
+            imageHeight: 300,
+            imageAlt: 'Reward Toy',
+            confirmButtonText: 'Yay!',
+            confirmButtonColor: '#d42426',
+            backdrop: `rgba(0,0,0,0.8) url('https://media.giphy.com/media/l4pTcQ4bYg6L5QpYI/giphy.gif') center center / cover no-repeat`, // Party confetti backdrop
+            customClass: {
+                popup: 'animate__animated animate__zoomIn'
+            }
+        });
+        toolOptions.innerHTML = "<h2>Mission Complete! 🎉</h2><p>You earned a toy!</p>";
+    }
+
+    // Start the first question
+    displayQuestion();
+</script>
 </body>
 </html>
