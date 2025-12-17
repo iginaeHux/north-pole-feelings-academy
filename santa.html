@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santa's Nervous Sillies</title>
+    <style>
+        body { font-family: 'Comic Sans MS', cursive; background: #fff5f5; padding: 20px; text-align: center; }
+        .box { background: white; border: 5px solid #d42426; border-radius: 20px; padding: 20px; max-width: 500px; margin: auto; }
+        img { width: 150px; }
+        .choice-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; }
+        .silly { background: #ffeb3b; }
+        .calm { background: #8bc34a; color: white; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <img src="santa_character.jpg" alt="Santa">
+        <h2>Santa has the "Nervous Sillies!"</h2>
+        <p>Santa's tummy is wiggling because he's nervous about Christmas Eve. He wants to do something silly!</p>
+        
+        <p><strong>What if Santa crushes his cookies into a "Cookie Slurpy"?</strong></p>
+        
+        <button class="choice-btn silly" onclick="alert('Uh oh! The slurpy spilled all over the sleigh! Now Santa has to stop and clean it up instead of delivering toys.')">Do the Silly Slurpy!</button>
+        
+        <button class="choice-btn calm" onclick="alert('Great choice! Santa took a deep breath. His tummy feels calm and the sleigh stays clean!')">Take a Deep Breath Instead</button>
+        
+        <hr>
+        <p><strong>Talk about it:</strong> What happens if we get too silly at dinner time? Do we have to clean up too?</p>
+        <a href="index.html">⬅ Go Back to Map</a>
+    </div>
+</body>
+</html>
