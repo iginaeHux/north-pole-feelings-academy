@@ -3,31 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santa's Nervous Sillies</title>
+    <title>Santa's Jingle Quest</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { font-family: 'Comic Sans MS', cursive; background: #fff5f5; padding: 20px; text-align: center; }
-        .box { background: white; border: 5px solid #d42426; border-radius: 20px; padding: 20px; max-width: 500px; margin: auto; }
-        img { width: 150px; }
-        .choice-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; }
-        .silly { background: #ffeb3b; }
-        .calm { background: #8bc34a; color: white; }
+        body { 
+            font-family: 'Comic Sans MS', cursive; 
+            background: linear-gradient(to bottom, #ff0000, #d42426); 
+            color: white; 
+            text-align: center; 
+            padding: 20px; 
+            min-height: 100vh;
+        }
+        .container { 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 30px; 
+            padding: 30px; 
+            max-width: 600px; 
+            margin: auto; 
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        /* The Jiggle Animation */
+        @keyframes jiggle {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .jiggle { animation: jiggle 0.5s; animation-iteration-count: infinite; }
+        
+        #santa-img { width: 200px; transition: transform 0.3s; }
+        
+        .question-box { margin-top: 20px; padding: 15px; background: #fff5f5; border-radius: 20px; border: 3px dashed #d42426; }
+        .btn { 
+            display: block; width: 100%; padding: 15px; margin: 10px 0; 
+            border: none; border-radius: 50px; cursor: pointer; 
+            font-size: 18px; font-weight: bold; transition: 0.2s;
+            box-shadow: 0 4px #999;
+        }
+        .btn:active { box-shadow: 0 0 #666; transform: translateY(4px); }
+        .silly { background: #ffeb3b; color: #333; }
+        .calm { background: #4caf50; color: white; }
+        .back-btn { background: #555; color: white; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <img src="santa_character.jpg" alt="Santa">
-        <h2>Santa has the "Nervous Sillies!"</h2>
-        <p>Santa's tummy is wiggling because he's nervous about Christmas Eve. He wants to do something silly!</p>
-        
-        <p><strong>What if Santa crushes his cookies into a "Cookie Slurpy"?</strong></p>
-        
-        <button class="choice-btn silly" onclick="alert('Uh oh! The slurpy spilled all over the sleigh! Now Santa has to stop and clean it up instead of delivering toys.')">Do the Silly Slurpy!</button>
-        
-        <button class="choice-btn calm" onclick="alert('Great choice! Santa took a deep breath. His tummy feels calm and the sleigh stays clean!')">Take a Deep Breath Instead</button>
-        
-        <hr>
-        <p><strong>Talk about it:</strong> What happens if we get too silly at dinner time? Do we have to clean up too?</p>
-        <a href="index.html">⬅ Go Back to Map</a>
+
+<div class="container">
+    <img src="santa_character.jpg" id="santa-img" alt="Santa">
+    <h1 id="title">Santa's Body Cues!</h1>
+    
+    <div id="game-area">
+        <div class="question-box">
+            <p id="question-text">Santa’s tummy is wiggling because he is nervous! He wants to turn his cookies into a "Cookie Slurpy" and pour it in his hat. Should he?</p>
+            <button class="btn silly" onclick="answer(false, 'Uh oh! The slurpy spilled! Now Santa is sticky and has to clean up. That took away his toy-delivery time!')">Yes! Be Silly!</button>
+            <button class="btn calm" onclick="answer(true, 'Ho Ho Ho! Santa took a deep breath. His tummy stopped wiggling and he stayed clean!')">No! Use a Calm Tool</button>
+        </div>
     </div>
+    
+    <a href="index.html" class="btn back-btn">⬅ Back to Map</a>
+</div>
+
+<script>
+    let currentStep = 0;
+    const santaImg = document.getElementById('santa-img');
+
+    const questions = [
+        {
+            q: "Santa feels his heart beating fast like a drum! He wants to jump on the bed until it breaks. Good idea?",
+            silly: "CRASH! The bed broke. Now Santa has nowhere to sleep before the big flight!",
+            calm: "Smart! Santa sat down and counted to 10. His heart slowed down and the bed is safe!"
+        },
+        {
+            q: "Santa has the 'Giggles' so bad he wants to spray whipped cream on the Reindeer! Should he do it?",
+            silly: "Sticky Reindeer can't fly! Now the elves have to give them all baths. We're running late!",
+            calm: "Good job! Santa did a 'Belly Breath' instead. The reindeer are clean and ready!"
+        },
+        {
+            q: "Santa is frustrated! He wants to throw his list in the snow and stomp on it. What happens?",
+            silly: "Oh no! The list is wet and we don't know who gets the toys! Santa has to go fix it.",
+            calm: "Yay! Santa asked an Elf for help. Asking for help is a great self-control tool!"
+        },
+        {
+            q: "Santa wants to shout 'JINGLE BELLS' at the top of his lungs while everyone is sleeping. Should he?",
+            silly: "Wake up! Everyone is grumpy now because they lost their sleep. Being too loud has consequences!",
+            calm: "Peaceful! Santa hummed a quiet tune. Everyone stayed asleep and happy."
+        }
+    ];
+
+    function answer(isCorrect, message) {
+        if (isCorrect) {
+            santaImg.classList.add('jiggle');
+            Swal.fire({
+                title: 'Great Choice!',
+                text: message,
+                icon: 'success',
+                confirmButtonText: 'Next Mission!',
+                backdrop: `rgba(0,123,0,0.4)`
+            }).then(() => {
+                santaImg.classList.remove('jiggle');
+                nextQuestion();
+            });
+        } else {
+            Swal.fire({
+                title: 'Uh Oh...',
+                text: message,
+                icon: 'error',
+                confirmButtonText: 'Try a Calm Tool',
+                backdrop: `rgba(123,0,0,0.4)`
+            });
+        }
+    }
+
+    function nextQuestion() {
+        if (currentStep < questions.length) {
+            const data = questions[currentStep];
+            document.getElementById('question-text').innerText = data.q;
+            // Update buttons
+            document.querySelectorAll('.silly')[0].onclick = () => answer(false, data.silly);
+            document.querySelectorAll('.calm')[0].onclick = () => answer(true, data.calm);
+            currentStep++;
+        } else {
+            Swal.fire('Mission Accomplished!', 'You helped Santa stay in control!', 'success');
+            document.getElementById('game-area').innerHTML = "<h2>Mission Complete! 🌟</h2>";
+        }
+    }
+</script>
+
 </body>
 </html>
