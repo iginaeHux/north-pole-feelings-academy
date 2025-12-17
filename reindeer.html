@@ -3,26 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reindeer Games</title>
+    <title>Rudolph's Feeling Meter</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { font-family: 'Comic Sans MS', cursive; background: #fdf5e6; padding: 20px; text-align: center; }
-        .box { background: white; border: 5px solid #8b4513; border-radius: 20px; padding: 20px; max-width: 500px; margin: auto; }
-        img { width: 150px; }
+        body { 
+            font-family: 'Comic Sans MS', cursive; 
+            background: linear-gradient(to bottom, #8b4513, #5d2e0a); 
+            color: #333; text-align: center; padding: 20px; min-height: 100vh;
+        }
+        .container { 
+            background: rgba(255, 255, 255, 0.95); 
+            border-radius: 40px; padding: 40px; max-width: 800px; 
+            margin: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        #reindeer-img { width: 300px; margin-bottom: 20px; transition: transform 0.3s; }
+        .jiggle { animation: jiggle 0.5s; animation-iteration-count: infinite; }
+        @keyframes jiggle {
+            0% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } 100% { transform: rotate(-3deg); }
+        }
+        h1 { font-size: 3rem; color: #d42426; margin-bottom: 10px; }
+        .question-box { font-size: 1.8rem; font-weight: bold; margin: 20px 0; line-height: 1.4; }
+        .btn { 
+            display: block; width: 100%; padding: 25px; margin: 15px 0; 
+            border: none; border-radius: 60px; cursor: pointer; 
+            font-size: 2rem; font-weight: bold; transition: 0.2s;
+            box-shadow: 0 6px #999;
+        }
+        .btn:active { box-shadow: 0 0 #666; transform: translateY(4px); }
+        .big { background: #d42426; color: white; }
+        .little { background: #f8b229; color: black; }
+        .back-btn { background: #555; color: white; font-size: 1.2rem; padding: 10px; width: 200px; margin: auto; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <img src="reindeer_character.jpg" alt="Reindeer">
-        <h2>Rudolph’s "Big Red" Feeling</h2>
-        <p>Rudolph is frustrated because his harness is itchy!</p>
-        
-        <h3>Questions for You:</h3>
-        <ul style="text-align: left;">
-            <li>If Rudolph stomps his hooves and yells, will the other reindeer want to play?</li>
-            <li>Can you show me a "Frustrated" face? Now show me a "Calm" face!</li>
-            <li>What can Rudolph say to Santa? "I need a break" or "I am MAD!"?</li>
-        </ul>
-        <a href="index.html">⬅ Go Back to Map</a>
+
+<div class="container">
+    <img src="reindeer_character.jpg" id="reindeer-img" alt="Reindeer">
+    <h1>Feeling Meter!</h1>
+    
+    <div id="game-area">
+        <div class="question-box" id="question-text">
+            Rudolph bumped his hoof! It hurts a little bit, but he can still walk. Is this a...
+        </div>
+        <button class="btn little" onclick="answer('little')">☁️ Little Feeling</button>
+        <button class="btn big" onclick="answer('big')">🔥 BIG Feeling!</button>
     </div>
+    
+    <a href="index.html" class="btn back-btn">⬅ Back to Map</a>
+</div>
+
+<script>
+    let step = 0;
+    const img = document.getElementById('reindeer-img');
+    const scenarios = [
+        {
+            q: "Rudolph’s harness is lost! He is so MAD he wants to kick the sleigh! Is this a...",
+            correct: "big",
+            msg: "Whoa! That is a BIG feeling. Rudolph needs to take a break before he breaks the sleigh!"
+        },
+        {
+            q: "He wanted a red carrot but got an orange one. He feels a tiny bit sad. Is this a...",
+            correct: "little",
+            msg: "You got it! It's a little sad, but he can still fly and have fun."
+        },
+        {
+            q: "The fog is so thick Rudolph is SCARED and his heart is thumping! Is this a...",
+            correct: "big",
+            msg: "Yes! When your heart thumps fast, that's a BIG feeling signal. Let's breathe."
+        },
+        {
+            q: "Another reindeer called him a silly name. He feels 'annoyed.' Is this a...",
+            correct: "little",
+            msg: "Right! We can use a 'Positive Thinking' tool and keep going."
+        }
+    ];
+
+    function answer(choice) {
+        const data = (step === 0) ? {correct: "little", msg: "Great! A little bump is a little feeling. We can keep going!"} : scenarios[step-1];
+        
+        if (choice === data.correct) {
+            img.classList.add('jiggle');
+            Swal.fire({
+                title: 'Spot on!',
+                text: data.msg,
+                icon: 'success',
+                confirmButtonText: 'Next Scenario',
+                confirmButtonColor: '#4caf50'
+            }).then(() => {
+                img.classList.remove('jiggle');
+                next();
+            });
+        } else {
+            Swal.fire({
+                title: 'Wait!',
+                text: "Think about Rudolph's body. Is this a feeling that stops the show, or just a tiny bug?",
+                icon: 'warning',
+                confirmButtonColor: '#f8b229'
+            });
+        }
+    }
+
+    function next() {
+        if (step < scenarios.length) {
+            document.getElementById('question-text').innerText = scenarios[step].q;
+            step++;
+        } else {
+            document.getElementById('game-area').innerHTML = "<h2>Rudolph is Ready to Fly! 🦌✨</h2><p style='font-size:1.5rem'>You are a Feelings Expert!</p>";
+        }
+    }
+</script>
 </body>
 </html>
