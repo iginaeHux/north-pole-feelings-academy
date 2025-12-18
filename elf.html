@@ -12,32 +12,31 @@
             background: linear-gradient(135deg, #165b33 0%, #0b3d1f 100%); 
             color: white; text-align: center; padding: 20px; overflow-x: hidden;
         }
-        /* Floating Snowflakes Background */
         .snow { position: fixed; top: 0; left: 0; pointer-events: none; z-index: -1; font-size: 2rem; }
 
         .game-card { 
             background: white; border-radius: 50px; padding: 40px; 
-            max-width: 700px; margin: auto; color: #333;
+            max-width: 750px; margin: auto; color: #333;
             border: 10px solid #f8b229; box-shadow: 0 20px 0 #d42426;
         }
-        #elf-img { width: 250px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
+        #elf-img { width: 220px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
         
-        .question { font-size: 2.5rem; color: #d42426; margin: 20px 0; font-weight: 900; line-height: 1.1; }
+        .question { font-size: 2.2rem; color: #d42426; margin: 20px 0; font-weight: 900; line-height: 1.2; min-height: 100px;}
         
-        .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         
         .tool-btn { 
-            padding: 30px; font-size: 1.8rem; border: none; border-radius: 30px; 
+            padding: 20px; font-size: 1.4rem; border: none; border-radius: 25px; 
             cursor: pointer; transition: all 0.2s; font-weight: bold;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 5px #ccc;
         }
-        .tool-btn:hover { transform: scale(1.1) rotate(2deg); }
-        .tool-btn span { font-size: 4rem; margin-bottom: 10px; }
+        .tool-btn:active { transform: translateY(4px); box-shadow: none; }
+        .tool-btn span { font-size: 3rem; margin-bottom: 5px; }
 
-        .breathe { background: #00d2ff; color: white; }
-        .count { background: #ff9a9e; color: white; }
-        .break { background: #a18cd1; color: white; }
-        .think { background: #f6d365; color: #333; }
+        /* Helpful Colors */
+        .good { background: #4CAF50; color: white; } /* Green */
+        .bad { background: #f44336; color: white; } /* Red */
         
         .back-home { margin-top: 40px; display: inline-block; color: white; font-size: 1.5rem; text-decoration: none; border-bottom: 2px dashed white; }
     </style>
@@ -48,67 +47,98 @@
 
     <div class="game-card animate__animated animate__bounceInDown">
         <img src="elf_character.jpg" id="elf-img" class="animate__animated animate__pulse animate__infinite" alt="Elf">
-        <div class="question" id="display-q">The toy tower FELL OVER! 🧱 <br>What's the best tool to stay calm?</div>
+        <div class="question" id="display-q">The toy tower FELL OVER! 🧱<br>What's the best tool to stay calm?</div>
         
         <div class="tool-grid" id="tool-grid">
-            <button class="tool-btn breathe" onclick="playTool('breathe')"><span>🌬️</span>Belly Breath</button>
-            <button class="tool-btn count" onclick="playTool('count')"><span>🔢</span>Count to 10</button>
-            <button class="tool-btn break" onclick="playTool('break')"><span>🛋️</span>Take a Break</button>
-            <button class="tool-btn think" onclick="playTool('think')"><span>💡</span>Happy Thought</button>
-        </div>
+            </div>
     </div>
 
     <a href="index.html" class="back-home">⬅ Go Back to Map</a>
 
 <script>
-    let missionNumber = 1;
+    let missionNumber = 0;
 
-    function playTool(type) {
-        if (type === 'breathe') {
-            Swal.fire({
-                title: 'Belly Breathing! 🌬️',
-                text: 'Breathe in like smelling a cookie... Breathe out like cooling hot cocoa!',
-                imageUrl: 'elf_character.jpg',
-                imageWidth: 200,
-                confirmButtonText: 'I feel calm now!',
-                confirmButtonColor: '#00d2ff',
-                showClass: { popup: 'animate__animated animate__fadeInUp' }
-            }).then(nextMission);
-        } else if (type === 'count') {
-            Swal.fire({
-                title: 'Let\'s Count! 🔢',
-                text: '1... 2... 3... 4... 5... 6... 7... 8... 9... 10!',
-                icon: 'info',
-                confirmButtonText: 'Done!',
-                confirmButtonColor: '#ff9a9e'
-            }).then(nextMission);
+    const missions = [
+        {
+            q: "The toy tower FELL OVER! 🧱<br>What's the best tool to stay calm?",
+            options: [
+                { text: "Belly Breath", icon: "🌬️", type: "good", feedback: "Great choice! Breathing helps our engine slow down." },
+                { text: "Scream at Everyone", icon: "📢", type: "bad", feedback: "Oh no! Screaming makes the workshop too loud and doesn't fix the tower." }
+            ]
+        },
+        {
+            q: "Someone took your paintbrush! 🎨<br>What should you do?",
+            options: [
+                { text: "Take theirs instead", icon: "🖌️", type: "bad", feedback: "Wait! Taking things back just starts a fight. That's not helpful." },
+                { text: "Ask for help", icon: "🤝", type: "good", feedback: "Smart! Asking an adult or a friend for help is a pro tool." }
+            ]
+        },
+        {
+            q: "It's too LOUD in the workshop! 🔨<br>How can the Elf feel better?",
+            options: [
+                { text: "Get Headphones", icon: "🎧", type: "good", feedback: "Perfect! Protecting your ears helps you stay in the Green Zone." },
+                { text: "Sit and Cry", icon: "😭", type: "bad", feedback: "It's okay to feel sad, but crying won't block the noise. Let's try a tool." }
+            ]
+        },
+        {
+            q: "The paint spilled on your shoes! 👟<br>Quick! What do you do?",
+            options: [
+                { text: "Have a stretch", icon: "🙆‍♂️", type: "good", feedback: "Yes! Moving your body helps let go of that 'Uh-Oh' feeling." },
+                { text: "Kick the paint bucket", icon: "🪣", type: "bad", feedback: "Whoops! Now there is an even bigger mess to clean up!" }
+            ]
+        }
+    ];
+
+    function loadMission() {
+        if (missionNumber < missions.length) {
+            const m = missions[missionNumber];
+            document.getElementById('display-q').innerHTML = m.q;
+            const grid = document.getElementById('tool-grid');
+            grid.innerHTML = ""; // Clear old buttons
+
+            m.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `tool-btn ${opt.type === 'good' ? 'good' : 'bad'}`;
+                btn.innerHTML = `<span>${opt.icon}</span>${opt.text}`;
+                btn.onclick = () => handleChoice(opt);
+                grid.appendChild(btn);
+            });
         } else {
             Swal.fire({
-                title: 'Tool Selected! ✨',
-                text: 'That is a great way to keep your cool!',
+                title: 'Workshop Master! 🏆',
+                text: 'You know which tools help and which ones make things harder!',
                 icon: 'success',
-                confirmButtonColor: '#a18cd1'
-            }).then(nextMission);
+                confirmButtonText: 'Back to Map'
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
         }
     }
 
-    function nextMission() {
-        missionNumber++;
-        const qText = document.getElementById('display-q');
-        
-        if (missionNumber === 2) {
-            qText.innerHTML = "Someone took your paintbrush! 🎨<br>Pick a tool before you get the sillies!";
-        } else if (missionNumber === 3) {
-            qText.innerHTML = "It's too LOUD in the workshop! 🔨<br>What can the Elf do to feel better?";
-        } else if (missionNumber === 4) {
-            qText.innerHTML = "You're too excited to sleep! 😴<br>Which tool helps your body slow down?";
-        } else if (missionNumber === 5) {
-            qText.innerHTML = "The paint spilled on your shoes! 👟<br>Quick! Use a tool!";
+    function handleChoice(opt) {
+        if (opt.type === 'good') {
+            Swal.fire({
+                title: 'Helpful Tool! ✨',
+                text: opt.feedback,
+                icon: 'success',
+                confirmButtonColor: '#4CAF50'
+            }).then(() => {
+                missionNumber++;
+                loadMission();
+            });
         } else {
-            Swal.fire('Workshop Master! 🏆', 'You know all the self-control tools!', 'success');
-            document.getElementById('tool-grid').innerHTML = "<h2>Mission Accomplished! 🌟</h2>";
+            Swal.fire({
+                title: 'Not quite...',
+                text: opt.feedback,
+                icon: 'error',
+                confirmButtonText: 'Try a better tool',
+                confirmButtonColor: '#f44336'
+            });
         }
     }
+
+    // Start the game
+    loadMission();
 </script>
 </body>
 </html>
