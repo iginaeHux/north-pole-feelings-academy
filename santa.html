@@ -27,8 +27,8 @@
 
         /* The Slider Area */
         .slider-box {
-            position: relative; width: 100%; height: 140px; 
-            margin: 20px 0; display: flex; align-items: center;
+            position: relative; width: 100%; height: 160px; 
+            margin: 20px 0; display: flex; align-items: center; justify-content: center;
         }
         
         .track {
@@ -40,16 +40,21 @@
 
         input[type="range"] {
             -webkit-appearance: none; width: 100%; background: transparent; 
-            position: absolute; z-index: 5; outline: none;
+            position: absolute; z-index: 10; outline: none; cursor: pointer;
         }
 
-        /* The Santa Slider Head */
+        /* This is the invisible slider handle */
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 110px; width: 110px;
-            background: url('santa_image_set/silly_santa_character.jpg') center center / cover;
-            border-radius: 50%; border: 5px solid #d42426; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateY(-5px);
-            transition: background 0.2s;
+            -webkit-appearance: none; height: 120px; width: 120px;
+            background: transparent; border: none;
+        }
+
+        /* This is the actual Santa image that follows the slider */
+        #santa-avatar {
+            position: absolute; width: 120px; height: 120px;
+            pointer-events: none; z-index: 5;
+            transition: left 0.1s ease-out;
+            transform: translateY(-10px);
         }
 
         /* Choice Buttons */
@@ -59,7 +64,7 @@
         .action-btn {
             padding: 15px 35px; font-size: 1.6rem; border-radius: 30px; cursor: pointer;
             border: none; font-family: 'Fredoka One', cursive; color: white;
-            transition: transform 0.2s, box-shadow 0.2s; min-width: 180px;
+            transition: transform 0.2; min-width: 180px;
         }
         .silly-btn { background: #fbc02d; box-shadow: 0 8px #f57f17; }
         .smart-btn { background: #4CAF50; box-shadow: 0 8px #2e7d32; }
@@ -76,7 +81,7 @@
 
     <div class="container animate__animated animate__fadeIn">
         <h1>Santa's Decision Lab</h1>
-        <p class="question-text" id="scenario-text">Loading Santa's brain...</p>
+        <p class="question-text" id="scenario-text">Setting up the workshop...</p>
 
         <div class="slider-box">
             <div class="track">
@@ -84,9 +89,10 @@
                 <span>SMART 🧠</span>
             </div>
             <input type="range" min="0" max="100" value="50" id="decision-slider">
+            <img src="santa_image_set/smart_santa_character.jpg" id="santa-avatar">
         </div>
 
-        <span class="choice-label">What choice should Santa make?</span>
+        <span class="choice-label">Which choice should Santa make?</span>
         <div class="btn-group">
             <button class="action-btn silly-btn" onclick="makeChoice('silly')">The Silly One!</button>
             <button class="action-btn smart-btn" onclick="makeChoice('smart')">The Smart One!</button>
@@ -111,24 +117,25 @@
                 sillyReply: "💥 CRACK! The bed broke! Now Santa has to sleep on the cold floor tonight. Oh no!",
                 smartReply: "🏃‍♂️ WHOOSH! Santa did 10 big jumping jacks on the rug. Now he's calm and ready for a nap.",
                 correct: "smart"
-            },
-            {
-                q: "Santa is frustrated with the list and wants to throw it in the snow!",
-                sillyReply: "❄️ OH NO! The list is wet and the ink is running! Now we don't know who gets the LEGOs!",
-                smartReply: "📋 Phew! Santa asked an Elf for help. Working together made the job much easier.",
-                correct: "smart"
             }
         ];
 
         const slider = document.getElementById('decision-slider');
+        const avatar = document.getElementById('santa-avatar');
         
-        // Change Santa's face as the slider moves!
+        // This moves Santa and changes his face based on the slider value
         slider.addEventListener('input', function() {
-            if (this.value < 50) {
-                // Inline CSS change for the thumb image
-                document.styleSheets[0].addRule('input[type="range"]::-webkit-slider-thumb', 'background-image: url("santa_image_set/silly_santa_character.jpg") !important');
+            const val = this.value;
+            // Calculate position
+            const width = slider.offsetWidth - 120; // 120 is image width
+            const newPos = (val / 100) * width;
+            avatar.style.left = newPos + "px";
+
+            // Switch images based on position
+            if (val < 50) {
+                avatar.src = "santa_image_set/silly_santa_character.jpg";
             } else {
-                document.styleSheets[0].addRule('input[type="range"]::-webkit-slider-thumb', 'background-image: url("santa_image_set/smart_santa_character.jpg") !important');
+                avatar.src = "santa_image_set/smart_santa_character.jpg";
             }
         });
 
@@ -136,6 +143,10 @@
             if (currentIdx < scenarios.length) {
                 document.getElementById('scenario-text').innerText = scenarios[currentIdx].q;
                 slider.value = 50;
+                // Center Santa on load
+                const center = (slider.offsetWidth / 2) - 60;
+                avatar.style.left = center + "px";
+                avatar.src = "santa_image_set/smart_santa_character.jpg";
             } else {
                 winGame();
             }
@@ -143,14 +154,13 @@
 
         function makeChoice(choice) {
             const s = scenarios[currentIdx];
-            
             if (choice === 'silly') {
                 Swal.fire({
                     title: "The Silly Choice!",
                     text: s.sillyReply,
                     imageUrl: 'santa_image_set/silly_santa_character.jpg',
                     imageWidth: 150,
-                    confirmButtonText: "Let's try that again!",
+                    confirmButtonText: "Oops! Try again!",
                     confirmButtonColor: "#fbc02d"
                 });
             } else {
@@ -173,16 +183,14 @@
         function winGame() {
             Swal.fire({
                 title: "North Pole Graduate!",
-                text: "You helped Santa make smart choices all day. He's ready for Christmas Eve!",
+                text: "You helped Santa survive the day!",
                 icon: "success",
-                confirmButtonText: "Back to Map",
-                confirmButtonColor: "#d42426"
-            }).then(() => {
-                window.location.href = "index.html";
-            });
+                confirmButtonText: "Back to Map"
+            }).then(() => { window.location.href = "index.html"; });
         }
 
-        load();
+        // Wait for slider to render then center Santa
+        window.onload = load;
     </script>
 </body>
 </html>
