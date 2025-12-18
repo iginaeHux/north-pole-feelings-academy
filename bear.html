@@ -3,124 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polar Bear's Long-Run Lab</title>
+    <title>Polar Bear's Marshmallow Challenge</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(180deg, #a1c4fd 0%, #c2e9fb 100%); 
-            color: #2c3e50; text-align: center; padding: 20px; min-height: 100vh;
+            font-family: 'Fredoka One', cursive; 
+            background: #e3f2fd; color: #2c3e50; text-align: center; padding: 20px; 
         }
         .container { 
-            background: rgba(255, 255, 255, 0.9); border-radius: 30px; padding: 30px; 
-            max-width: 800px; margin: auto; border: 5px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: white; border-radius: 40px; padding: 30px; 
+            max-width: 850px; margin: auto; border: 8px solid #3498db; 
+            box-shadow: 0 10px 0 #2980b9;
         }
-        #bear-img { width: 180px; margin-bottom: 20px; }
-        .scenario-box { background: #fff; padding: 20px; border-radius: 20px; margin: 20px 0; font-size: 1.3rem; line-height: 1.5; border-left: 10px solid #3498db; }
+        #bear-img { width: 160px; }
         
-        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
-        
-        .choice-card {
-            padding: 25px; border-radius: 20px; border: none; cursor: pointer;
-            transition: all 0.3s; display: flex; flex-direction: column; align-items: center;
-            font-size: 1.1rem; font-weight: bold; position: relative; overflow: hidden;
+        /* The Progress Area */
+        .reward-zone { 
+            background: #fff3e0; padding: 15px; border-radius: 20px; 
+            margin: 20px 0; border: 3px dashed #ff9800; display: flex; 
+            justify-content: center; align-items: center; gap: 10px;
+        }
+        .marshmallow { font-size: 2rem; opacity: 0.3; transition: 0.5s; }
+        .marshmallow.earned { opacity: 1; transform: scale(1.2); }
+
+        .scenario-box { 
+            background: #f8f9fa; padding: 25px; border-radius: 20px; 
+            margin: 20px 0; font-size: 1.4rem; border-left: 10px solid #3498db;
         }
         
-        /* Impulse Style */
-        .impulse { background: #fee2e2; color: #991b1b; border: 3px solid #f87171; }
-        .impulse:hover { background: #fecaca; transform: translateY(-5px); }
-        .impulse-label { font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; color: #ef4444; }
+        /* Identical Choice Grid - No cheating! */
+        .choice-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; 
+        }
+        .choice-btn {
+            padding: 20px; border-radius: 20px; border: 3px solid #3498db;
+            background: #fff; color: #2c3e50; cursor: pointer;
+            font-size: 1.1rem; font-weight: bold; transition: 0.2s;
+            box-shadow: 0 6px #3498db; display: flex; align-items: center; justify-content: center;
+        }
+        .choice-btn:hover { background: #e1f5fe; transform: translateY(-2px); }
+        .choice-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        /* Wise Style */
-        .wise { background: #dcfce7; color: #166534; border: 3px solid #4ade80; }
-        .wise:hover { background: #bbf7d0; transform: translateY(-5px); }
-        .wise-label { font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; color: #22c55e; }
-
-        .back-btn { margin-top: 30px; display: inline-block; color: #3498db; text-decoration: none; font-weight: bold; }
+        .back-btn { margin-top: 30px; display: inline-block; color: #3498db; text-decoration: none; }
     </style>
 </head>
 <body>
 
 <div class="container animate__animated animate__fadeIn">
     <img src="polar_bear.jpg" id="bear-img" alt="Polar Bear">
-    <h1 style="color: #2980b9;">The Long-Run Lab</h1>
-    <p>Help the Polar Bear choose between his <strong>Impulse</strong> and his <strong>Wise Mind</strong>.</p>
+    <h1 style="color: #2980b9;">Polar Bear's Long-Run Lab</h1>
 
-    <div class="scenario-box" id="scenario-text">
-        Polar Bear worked all morning on a snow sculpture, but a gust of wind knocked the head off! He is FURIOUS.
+    <div class="reward-zone">
+        <span>Cocoa Status:</span>
+        <span id="m1" class="marshmallow">☁️</span>
+        <span id="m2" class="marshmallow">☁️</span>
+        <span id="m3" class="marshmallow">☁️</span>
+        <span id="m4" class="marshmallow">☁️</span>
+        <span id="m5" class="marshmallow">☁️</span>
     </div>
+
+    <div class="scenario-box" id="scenario-text">Loading situation...</div>
 
     <div class="choice-grid" id="choices">
         </div>
 </div>
 
-<a href="index.html" class="back-btn">⬅ Back to the Snow</a>
+<a href="index.html" class="back-btn">⬅ Back to Map</a>
 
 <script>
     let currentStep = 0;
+    let earnedCount = 0;
 
     const gameData = [
         {
-            scenario: "Polar Bear worked all morning on a snow sculpture, but the wind knocked the head off! He feels his face getting hot.",
+            scenario: "Polar Bear is building a Lego ice castle, but he can't find the very last piece. He feels his body getting tight and itchy with frustration.",
             options: [
-                { 
-                    type: "impulse", 
-                    label: "The Right-Now Impulse", 
-                    text: "Smash the rest of it! If it's broken anyway, might as well destroy it all.",
-                    feedback: "It felt good to smash it for 2 seconds, but now your whole morning's work is gone forever. Now you feel even sadder."
-                },
-                { 
-                    type: "wise", 
-                    label: "The Long-Run Wise Choice", 
-                    text: "Take a 'Cold Snow' breath. Go inside for a snack, then come back and fix the head later.",
-                    feedback: "Smart! By walking away, you saved the sculpture. When you came back calm, fixing the head only took 5 minutes!"
-                }
+                { text: "Dump the whole box on the floor to find it faster.", type: "impulse", feedback: "Now you have 500 pieces to look through instead of 50. You just made the job much harder!" },
+                { text: "Kick the castle and say 'I didn't even want to build this anyway!'", type: "impulse", feedback: "That's a 'False Thought.' You did want to build it, and now it's broken. Your morning is ruined." },
+                { text: "Take 3 deep 'North Pole' breaths and look under the rug.", type: "wise", feedback: "Found it! Staying calm kept your eyes sharp. You finished the castle!" },
+                { text: "Ask someone to help you look for 2 minutes.", type: "wise", feedback: "Great teamwork! Two sets of eyes found the piece in 10 seconds flat." }
             ]
         },
         {
-            scenario: "The other bears are playing 'Ice Slide' and won't let Polar Bear join in. He feels left out and 'Spiky'.",
+            scenario: "Another bear tells a joke that makes everyone laugh, but Polar Bear doesn't think it's funny. He feels a 'Spiky' feeling in his chest.",
             options: [
-                { 
-                    type: "impulse", 
-                    label: "The Right-Now Impulse", 
-                    text: "Stand at the top of the slide and block everyone so nobody can play.",
-                    feedback: "Now the other bears are actually angry at you. You definitely won't get an invite to play tomorrow now."
-                },
-                { 
-                    type: "wise", 
-                    label: "The Long-Run Wise Choice", 
-                    text: "Go find a different game to play for a bit. Show them you can have fun on your own.",
-                    feedback: "Exactly. When they saw you having fun elsewhere, they realized they missed you and asked you to join the next round!"
-                }
+                { text: "Tell the other bear his joke was 'babyish' and stupid.", type: "impulse", feedback: "Ouch. That made the other bear sad and now everyone thinks you're a grouch. Not a win." },
+                { text: "Just keep a quiet face and wait for the next game.", type: "wise", feedback: "Perfect. You don't have to laugh at everything, but being kind keeps the peace." },
+                { text: "Start shouting a louder joke so people listen to you instead.", type: "impulse", feedback: "Now it's just a shouting match. Everyone is annoyed by the noise." },
+                { text: "Walk to the water hole to get a drink and reset your spiky feeling.", type: "wise", feedback: "Excellent self-regulation. You handled that 'Spiky' feeling like a pro." }
             ]
         },
         {
-            scenario: "Polar Bear is trying to learn a new trick on his skates, but he keeps falling. He wants to throw his skates into the ocean.",
+            scenario: "Polar Bear's tablet battery dies right in the middle of his favorite game. He wants to throw it.",
             options: [
-                { 
-                    type: "impulse", 
-                    label: "The Right-Now Impulse", 
-                    text: "Quit! Call the skates 'stupid' and stomp back to the cave.",
-                    feedback: "You're safe from falling, but you'll never learn to skate. That's a 'Forever Quit'—is that what you want?"
-                },
-                { 
-                    type: "wise", 
-                    label: "The Long-Run Wise Choice", 
-                    text: "Remind yourself: 'My brain is literally growing right now.' Try 3 more times, then take a break.",
-                    feedback: "You did it! On the 3rd try, you stayed up for 5 seconds. The 'Long-Run' you is going to be a pro skater!"
-                }
+                { text: "Plug it in and go find a book to read while it charges.", type: "wise", feedback: "Smart! In 20 minutes, you'll have battery AND you got to read. Double win." },
+                { text: "Scream 'THIS ALWAYS HAPPENS TO ME!'", type: "impulse", feedback: "Does it always happen? Or did you just forget to charge it? Screaming won't fill the battery." },
+                { text: "Wait patiently by the charger and stare at the red light.", type: "wise", feedback: "It takes self-control to wait. You're training your brain to handle 'The Boring Middles'." },
+                { text: "Try to turn it back on 50 times in a row.", type: "impulse", feedback: "That actually drains the tiny bit of power left even faster. You're working against yourself!" }
             ]
         }
     ];
 
     function loadGame() {
         if (currentStep >= gameData.length) {
-            Swal.fire({
-                title: "Wise Bear Status: ACHIEVED! 🏆",
-                text: "You mastered the difference between an Impulse and the Long-Run. Your brain is officially sharp!",
-                icon: "success"
-            }).then(() => window.location.href = "index.html");
+            winGame();
             return;
         }
 
@@ -129,35 +117,52 @@
         const choiceContainer = document.getElementById('choices');
         choiceContainer.innerHTML = "";
 
-        data.options.forEach(opt => {
-            const card = document.createElement('button');
-            card.className = `choice-card ${opt.type}`;
-            card.innerHTML = `<span class="${opt.type}-label">${opt.label}</span>${opt.text}`;
-            card.onclick = () => handleChoice(opt);
-            choiceContainer.appendChild(card);
+        // Shuffle options so the 'Wise' one isn't always in the same spot
+        const shuffled = data.options.sort(() => Math.random() - 0.5);
+
+        shuffled.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = `choice-btn`;
+            btn.innerHTML = opt.text;
+            btn.onclick = () => handleChoice(opt);
+            choiceContainer.appendChild(btn);
         });
     }
 
     function handleChoice(opt) {
         if (opt.type === "wise") {
+            earnedCount++;
+            document.getElementById(`m${earnedCount}`).classList.add('earned');
             Swal.fire({
-                title: "Wise Choice! 🧠",
-                text: opt.feedback,
+                title: "Wise Move! ☁️",
+                text: opt.feedback + " You earned a marshmallow!",
                 icon: "success",
-                confirmButtonColor: "#22c55e"
+                confirmButtonColor: "#3498db"
             }).then(() => {
                 currentStep++;
                 loadGame();
             });
         } else {
             Swal.fire({
-                title: "The Impulse Trap! 🪤",
+                title: "Impulse Trap! 🪤",
                 text: opt.feedback,
                 icon: "error",
-                confirmButtonText: "Let's try Wise Mind instead",
-                confirmButtonColor: "#ef4444"
+                confirmButtonText: "Think it through again",
+                confirmButtonColor: "#e74c3c"
             });
         }
+    }
+
+    function winGame() {
+        Swal.fire({
+            title: "Cocoa Time! ☕",
+            text: "You collected the marshmallows and mastered the Long-Run Lab!",
+            imageUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJqZ3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif',
+            imageWidth: 300,
+            confirmButtonText: "Return to Map"
+        }).then(() => {
+            window.location.href = "index.html";
+        });
     }
 
     loadGame();
