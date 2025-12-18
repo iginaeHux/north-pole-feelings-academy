@@ -5,192 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santa's Decision Lab</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Fredoka One', cursive; 
             background: linear-gradient(to bottom, #d42426, #a10000); 
-            color: white; text-align: center; padding: 20px; 
-            min-height: 100vh; margin: 0; display: flex; flex-direction: column; align-items: center;
+            color: white; text-align: center; padding: 20px; min-height: 100vh;
         }
-
         .container { 
             background: rgba(255, 255, 255, 0.98); 
             border-radius: 50px; padding: 30px; width: 90%; max-width: 800px; 
-            margin: auto; color: #333; border: 8px solid #f8b229; 
-            box-shadow: 0 15px 0 #8B0000; position: relative;
+            margin: auto; color: #333; border: 8px solid #f8b229; box-shadow: 0 15px 0 #8B0000;
         }
+        h1 { color: #d42426; font-size: 2.5rem; }
+        .question-text { font-size: 1.5rem; margin: 20px 0; min-height: 80px; color: #444; }
 
-        h1 { font-size: 2.8rem; color: #d42426; margin: 10px 0; }
-        .question-text { font-size: 1.6rem; margin: 20px 0; color: #444; line-height: 1.4; min-height: 80px; }
-
-        /* The Slider Area */
-        .slider-box {
-            position: relative; width: 100%; height: 160px; 
-            margin: 20px 0; display: flex; align-items: center; justify-content: center;
-        }
-        
+        /* The Slider Track */
+        .slider-box { position: relative; width: 100%; height: 140px; margin: 20px 0; }
         .track {
-            width: 100%; height: 45px; border-radius: 25px;
+            width: 100%; height: 40px; border-radius: 20px;
             background: linear-gradient(to right, #ffeb3b, #4CAF50);
             border: 4px solid #ccc; display: flex; justify-content: space-between;
-            padding: 0 30px; align-items: center; font-size: 1.4rem; font-weight: bold;
+            padding: 0 20px; align-items: center; font-weight: bold;
         }
 
         input[type="range"] {
             -webkit-appearance: none; width: 100%; background: transparent; 
-            position: absolute; z-index: 10; outline: none; cursor: pointer;
+            position: absolute; top: 0; left: 0; z-index: 10; margin-top: 10px;
         }
 
-        /* This is the invisible slider handle */
+        /* The Santa Head on the Slider */
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 120px; width: 120px;
-            background: transparent; border: none;
+            -webkit-appearance: none; height: 90px; width: 90px;
+            background: url('santa_character.jpg') center center / cover;
+            border-radius: 50%; border: 4px solid #d42426; cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
         }
 
-        /* This is the actual Santa image that follows the slider */
-        #santa-avatar {
-            position: absolute; width: 120px; height: 120px;
-            pointer-events: none; z-index: 5;
-            transition: left 0.1s ease-out;
-            transform: translateY(-10px);
-        }
-
-        /* Choice Buttons */
-        .choice-label { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; display: block; color: #d42426; }
-        .btn-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
-        
+        /* Decision Buttons */
+        .btn-group { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
         .action-btn {
-            padding: 15px 35px; font-size: 1.6rem; border-radius: 30px; cursor: pointer;
-            border: none; font-family: 'Fredoka One', cursive; color: white;
-            transition: transform 0.2; min-width: 180px;
+            padding: 15px 30px; font-size: 1.4rem; border-radius: 30px; border: none;
+            cursor: pointer; font-family: 'Fredoka One', cursive; color: white; transition: 0.2s;
         }
-        .silly-btn { background: #fbc02d; box-shadow: 0 8px #f57f17; }
-        .smart-btn { background: #4CAF50; box-shadow: 0 8px #2e7d32; }
+        .silly-btn { background: #fbc02d; box-shadow: 0 6px #f57f17; }
+        .smart-btn { background: #4CAF50; box-shadow: 0 6px #2e7d32; }
         .action-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        #cookie-counter { 
-            font-size: 1.5rem; margin-top: 10px; background: white; 
-            color: #333; padding: 10px 30px; border-radius: 50px; 
-            border: 3px solid #f8b229;
-        }
+        #cookie-tracker { font-size: 1.5rem; margin-top: 25px; background: #fff; padding: 10px; border-radius: 20px; color: #333; }
     </style>
 </head>
 <body>
 
-    <div class="container animate__animated animate__fadeIn">
-        <h1>Santa's Decision Lab</h1>
-        <p class="question-text" id="scenario-text">Setting up the workshop...</p>
+<div class="container">
+    <h1>Santa's Decision Lab</h1>
+    <p class="question-text" id="question-display">Loading...</p>
 
-        <div class="slider-box">
-            <div class="track">
-                <span>🤪 SILLY</span>
-                <span>SMART 🧠</span>
-            </div>
-            <input type="range" min="0" max="100" value="50" id="decision-slider">
-            <img src="santa_image_set/smart_santa_character.jpg" id="santa-avatar">
+    <div class="slider-box">
+        <div class="track">
+            <span>🤪 SILLY</span>
+            <span>SMART 🧠</span>
         </div>
-
-        <span class="choice-label">Which choice should Santa make?</span>
-        <div class="btn-group">
-            <button class="action-btn silly-btn" onclick="makeChoice('silly')">The Silly One!</button>
-            <button class="action-btn smart-btn" onclick="makeChoice('smart')">The Smart One!</button>
-        </div>
-
-        <div id="cookie-counter">Cookies Collected: <span id="count">0</span> 🍪</div>
+        <input type="range" min="0" max="100" value="50" id="sleigh-slider">
     </div>
 
-    <script>
-        let currentIdx = 0;
-        let cookies = 0;
+    <p style="font-weight: bold;">Which choice should Santa make?</p>
+    <div class="btn-group">
+        <button class="action-btn silly-btn" onclick="makeChoice('silly')">The Silly One!</button>
+        <button class="action-btn smart-btn" onclick="makeChoice('smart')">The Smart One!</button>
+    </div>
 
-        const scenarios = [
-            {
-                q: "Santa wants to turn his milk into a 'Cookie Slurpy' and pour it in his hat!",
-                sillyReply: "🤢 BLECH! Santa poured it in his hat and now it's dripping down his face. He's sticky and grumpy!",
-                smartReply: "🥛 YUM! Santa drank the milk from a glass. He has a full tummy and his hat is nice and dry.",
-                correct: "smart"
-            },
-            {
-                q: "Santa is so hyper he wants to jump on the bed until the springs pop out!",
-                sillyReply: "💥 CRACK! The bed broke! Now Santa has to sleep on the cold floor tonight. Oh no!",
-                smartReply: "🏃‍♂️ WHOOSH! Santa did 10 big jumping jacks on the rug. Now he's calm and ready for a nap.",
-                correct: "smart"
-            }
-        ];
+    <div id="cookie-tracker">Cookies Collected: <span id="count">0</span> 🍪</div>
+</div>
 
-        const slider = document.getElementById('decision-slider');
-        const avatar = document.getElementById('santa-avatar');
-        
-        // This moves Santa and changes his face based on the slider value
-        slider.addEventListener('input', function() {
-            const val = this.value;
-            // Calculate position
-            const width = slider.offsetWidth - 120; // 120 is image width
-            const newPos = (val / 100) * width;
-            avatar.style.left = newPos + "px";
+<script>
+    let currentIdx = 0;
+    let cookies = 0;
 
-            // Switch images based on position
-            if (val < 50) {
-                avatar.src = "santa_image_set/silly_santa_character.jpg";
-            } else {
-                avatar.src = "santa_image_set/smart_santa_character.jpg";
-            }
-        });
-
-        function load() {
-            if (currentIdx < scenarios.length) {
-                document.getElementById('scenario-text').innerText = scenarios[currentIdx].q;
-                slider.value = 50;
-                // Center Santa on load
-                const center = (slider.offsetWidth / 2) - 60;
-                avatar.style.left = center + "px";
-                avatar.src = "santa_image_set/smart_santa_character.jpg";
-            } else {
-                winGame();
-            }
+    const questions = [
+        {
+            q: "Santa's tummy is rumbling! He wants to turn his milk and cookies into a 'Cookie Slurpy' and pour it in his hat. Silly or Smart?",
+            sillyFeedback: "🤪 Oh no! The slurpy spilled all over the sleigh! Now Santa is sticky and has to clean up instead of delivering toys!",
+            smartFeedback: "🧠 Ho Ho Ho! Santa took a deep breath and drank his milk nicely. His tummy stopped rumbling and the sleigh stayed clean!"
+        },
+        {
+            q: "Santa feels his heart beating fast like a drum! He wants to jump on the bed until it breaks. Silly or Smart?",
+            sillyFeedback: "💥 CRASH! The bed broke. Now Santa has nowhere to sleep before the big flight!",
+            smartFeedback: "😴 Ho Ho Ho! Santa sat down and counted to 10. His heart slowed down and the bed is safe!"
+        },
+        {
+            q: "Santa has the 'Giggles' so bad he wants to spray whipped cream on the Reindeer! Silly or Smart?",
+            sillyFeedback: "🚫 Sticky Reindeer can't fly! Now the elves have to give them all baths. We're running late!",
+            smartFeedback: "😂 Ho Ho Ho! Santa did a 'Belly Breath' instead. The reindeer are clean and ready!"
+        },
+        {
+            q: "Santa is frustrated! He wants to throw his list in the snow and stomp on it. Silly or Smart?",
+            sillyFeedback: "📜 Oh no! The list is wet and we don't know who gets the toys! Santa has to go fix it.",
+            smartFeedback: "🤝 Ho Ho Ho! Santa asked an Elf for help. Asking for help is a great self-control tool!"
+        },
+        {
+            q: "Santa wants to shout 'JINGLE BELLS' at the top of his lungs while everyone is sleeping. Silly or Smart?",
+            sillyFeedback: "😠 Wake up! Everyone is grumpy now because they lost their sleep. Being too loud has consequences!",
+            smartFeedback: "🤫 Ho Ho Ho! Santa hummed a quiet tune. Everyone stayed asleep and happy. Good listening!"
         }
+    ];
 
-        function makeChoice(choice) {
-            const s = scenarios[currentIdx];
-            if (choice === 'silly') {
-                Swal.fire({
-                    title: "The Silly Choice!",
-                    text: s.sillyReply,
-                    imageUrl: 'santa_image_set/silly_santa_character.jpg',
-                    imageWidth: 150,
-                    confirmButtonText: "Oops! Try again!",
-                    confirmButtonColor: "#fbc02d"
-                });
-            } else {
-                cookies++;
-                document.getElementById('count').innerText = cookies;
-                Swal.fire({
-                    title: "The Smart Choice!",
-                    text: s.smartReply,
-                    imageUrl: 'santa_image_set/smart_santa_character.jpg',
-                    imageWidth: 150,
-                    confirmButtonText: "Next Scenario",
-                    confirmButtonColor: "#4CAF50"
-                }).then(() => {
-                    currentIdx++;
-                    load();
-                });
-            }
+    function loadQuestion() {
+        if (currentIdx < questions.length) {
+            document.getElementById('question-display').innerText = questions[currentIdx].q;
+            document.getElementById('sleigh-slider').value = 50;
+        } else {
+            Swal.fire("Workshop Complete!", "Santa is ready for the big night!", "success")
+                .then(() => window.location.href = "index.html");
         }
+    }
 
-        function winGame() {
+    function makeChoice(type) {
+        const q = questions[currentIdx];
+        if (type === 'silly') {
             Swal.fire({
-                title: "North Pole Graduate!",
-                text: "You helped Santa survive the day!",
+                title: "The Silly Choice!",
+                text: q.sillyFeedback,
+                icon: "warning",
+                confirmButtonText: "Try to be Smart",
+                confirmButtonColor: "#fbc02d"
+            });
+        } else {
+            cookies++;
+            document.getElementById('count').innerText = cookies;
+            Swal.fire({
+                title: "Ho Ho Ho!",
+                text: q.smartFeedback,
                 icon: "success",
-                confirmButtonText: "Back to Map"
-            }).then(() => { window.location.href = "index.html"; });
+                confirmButtonText: "Next Choice",
+                confirmButtonColor: "#4CAF50"
+            }).then(() => {
+                currentIdx++;
+                loadQuestion();
+            });
         }
+    }
 
-        // Wait for slider to render then center Santa
-        window.onload = load;
-    </script>
+    loadQuestion();
+</script>
 </body>
 </html>
