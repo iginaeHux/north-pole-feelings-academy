@@ -10,99 +10,85 @@
     <style>
         body { 
             font-family: 'Fredoka One', cursive; 
-            background: #0f2027; /* Darker night sky to make snow pop */
             background: linear-gradient(to bottom, #2c5364, #203a43, #0f2027);
             color: #2c3e50; text-align: center; padding: 20px; overflow-x: hidden; min-height: 100vh;
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         
-        /* Falling Snow Animation */
-        .snowflake {
-            color: #fff; font-size: 1.2rem; position: fixed; top: -10%; z-index: 1;
-            user-select: none; cursor: default; animation: fall linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(110vh); }
-        }
+        /* Snowflake layer */
+        #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .snowflake { color: #fff; font-size: 1.2rem; position: absolute; top: -10%; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(110vh); } }
 
-        .container { 
+        /* Unique Container */
+        .game-wrapper { 
             position: relative; z-index: 10;
             background: rgba(255, 255, 255, 0.95); border-radius: 40px; padding: 30px; 
-            max-width: 850px; margin: 40px auto; border: 8px solid #3498db; 
-            box-shadow: 0 15px 0 #2980b9;
+            max-width: 800px; width: 90%; border: 8px solid #3498db; 
+            box-shadow: 0 15px 0 #2980b9; margin: 20px;
         }
 
-        #bear-img { width: 180px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
-        
-        .mission-text { color: #2980b9; font-size: 1.2rem; margin-bottom: 10px; }
+        #bear-img { width: 160px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+        .mission-text { color: #2980b9; font-size: 1.1rem; margin-bottom: 10px; }
 
-        /* The Reward Zone */
         .reward-zone { 
             background: #fff3e0; padding: 15px; border-radius: 20px; 
-            margin: 20px 0; border: 3px dashed #ff9800; display: flex; 
-            justify-content: center; align-items: center; gap: 15px;
+            margin: 15px 0; border: 3px dashed #ff9800; display: flex; 
+            justify-content: center; gap: 12px;
         }
         .marshmallow { 
-            font-size: 2.5rem; filter: grayscale(100%); opacity: 0.2; 
+            font-size: 2.2rem; filter: grayscale(100%); opacity: 0.2; 
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .marshmallow.earned { 
-            filter: grayscale(0%); opacity: 1; transform: scale(1.3) rotate(360deg); 
-        }
+        .marshmallow.earned { filter: grayscale(0%); opacity: 1; transform: scale(1.3) rotate(360deg); }
 
         .scenario-box { 
-            background: #f0f7ff; padding: 25px; border-radius: 20px; 
-            margin: 20px 0; font-size: 1.4rem; border-left: 10px solid #3498db;
-            color: #34495e; min-height: 80px;
+            background: #f0f7ff; padding: 20px; border-radius: 20px; 
+            margin: 15px 0; font-size: 1.3rem; border-left: 10px solid #3498db;
+            color: #34495e; min-height: 60px;
         }
         
-        /* Identical Choice Grid - High Stakes! */
-        .choice-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; 
-        }
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .choice-btn {
-            padding: 25px; border-radius: 25px; border: 3px solid #3498db;
+            padding: 18px; border-radius: 20px; border: 3px solid #3498db;
             background: #fff; color: #2c3e50; cursor: pointer;
-            font-size: 1.1rem; font-weight: bold; transition: 0.3s;
-            box-shadow: 0 8px #3498db; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: bold; transition: 0.3s;
+            box-shadow: 0 6px #3498db; display: flex; align-items: center; justify-content: center;
         }
-        .choice-btn:hover { background: #e1f5fe; transform: scale(1.02); }
-        .choice-btn:active { transform: translateY(6px); box-shadow: none; }
+        .choice-btn:hover { background: #e1f5fe; transform: scale(1.03); }
+        .choice-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        .back-btn { margin-top: 30px; display: inline-block; color: white; text-decoration: none; border-bottom: 2px solid white; padding-bottom: 2px; }
+        .back-btn { color: white; text-decoration: none; border-bottom: 2px solid white; z-index: 10; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="snow-container"></div>
 
-<div class="container animate__animated animate__zoomIn">
+<div class="game-wrapper animate__animated animate__zoomIn">
     <img src="polar_bear.jpg" id="bear-img" class="animate__animated animate__pulse animate__infinite" alt="Polar Bear">
-    <h1 style="color: #2980b9; margin-top: 10px;">The Marshmallow Challenge</h1>
-    <p class="mission-text">Help Polar Bear keep calm so he can go have his <strong>calming cocoa!</strong></p>
+    <h1 style="color: #2980b9; margin: 10px 0;">The Marshmallow Challenge</h1>
+    <p class="mission-text">Help Polar Bear keep calm for his <strong>calming cocoa!</strong></p>
 
     <div class="reward-zone">
         <span id="m1" class="marshmallow">☁️</span>
         <span id="m2" class="marshmallow">☁️</span>
         <span id="m3" class="marshmallow">☁️</span>
-        <span id="m4" class="marshmallow">☁️</span>
-        <span id="m5" class="marshmallow">☁️</span>
     </div>
 
-    <div class="scenario-box" id="scenario-text">Loading situation...</div>
-
+    <div class="scenario-box" id="scenario-text">Loading...</div>
     <div class="choice-grid" id="choices"></div>
 </div>
 
-<a href="index.html" class="back-btn">⬅ Go Back to Map</a>
+<a href="index.html" class="back-btn">⬅ Back to Map</a>
 
 <script>
     let currentStep = 0;
     let earnedCount = 0;
 
-    // Snow Maker
     function createSnow() {
         const container = document.getElementById('snow-container');
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 25; i++) {
             let snow = document.createElement('div');
             snow.className = 'snowflake';
             snow.innerHTML = '❄';
@@ -115,183 +101,35 @@
 
     const gameData = [
         {
-            scenario: "Polar Bear's favorite ice-fishing hole is frozen shut! He's hungry and feels his 'angry heat' rising.",
+            scenario: "The other bears are playing tag, but they forgot to ask Polar Bear. He feels 'Invisible'.",
             options: [
-                { text: "Stomp on the ice until your feet hurt.", type: "impulse", feedback: "Now your feet hurt AND you're still hungry. That didn't help the long-run!" },
-                { text: "Take 5 slow breaths and go look for a new hole.", type: "wise", feedback: "Perfect! Calm eyes find fish faster than angry eyes." },
-                { text: "Yell 'THIS IS UNFAIR' at the sky.", type: "impulse", feedback: "The sky didn't answer, and now you have a sore throat. Want to try a Wise choice?" },
-                { text: "Ask a friend to help you chip the ice away.", type: "wise", feedback: "Teamwork! You both got to eat lunch because you kept your cool." }
+                { text: "Walk up and say: 'Hey, can I be IT next round?'", type: "wise", feedback: "Brave move! They said yes immediately." },
+                { text: "Sit behind a rock and wait for them to notice.", type: "impulse", feedback: "They're busy playing; they might not see you. You're just cold now." },
+                { text: "Do a big stretch and remember: 'I am fun to play with.'", type: "wise", feedback: "Self-talk is a superpower. You felt better and joined in!" },
+                { text: "Think: 'They are mean and I hate this game.'", type: "impulse", feedback: "That 'Spiky Thought' makes you feel worse, not better." }
             ]
         },
         {
-            scenario: "The other bears are playing tag, but they forgot to ask Polar Bear to play. He feels very 'Invisible'.",
+            scenario: "Polar Bear's favorite ice-fishing hole is frozen shut! He's hungry and 'angry heat' is rising.",
             options: [
-                { text: "Walk up and say: 'Hey, can I be IT next round?'", type: "wise", feedback: "Simple and brave! They said yes immediately—they just forgot!" },
-                { text: "Sit behind a rock and wait for them to notice you're sad.", type: "impulse", feedback: "They are busy playing; they might not see you. Now you're just cold and lonely." },
-                { text: "Think: 'They are mean and I hate this game.'", type: "impulse", feedback: "That's a 'Spiky Thought.' It makes you feel worse, not better." },
-                { text: "Do a big stretch and remember: 'I am a fun bear to play with.'", type: "wise", feedback: "Boosting your own mood is a superpower. You felt better and joined in!" }
-            ]
-        },
-        {
-            scenario: "Polar Bear is trying to draw a snowflake, but it looks like a blob. He feels like quitting forever.",
-            options: [
-                { text: "Scrunch up the paper and throw it across the cave.", type: "impulse", feedback: "Now you have no paper and a mess to clean. Did that help you learn?" },
-                { text: "Say: 'I'm a blob drawer, not a snowflake drawer.'", type: "impulse", feedback: "Don't put yourself in a box! You just haven't learned it YET." },
-                { text: "Label the feeling: 'I am feeling frustrated right now.'", type: "wise", feedback: "Naming it tames it! Once you named it, the frustration started to shrink." },
-                { text: "Turn the 'blob' into a funny snowball drawing instead.", type: "wise", feedback: "Great pivot! You stayed calm and turned a 'mistake' into something cool." }
+                { text: "Take 5 slow breaths and look for a new hole.", type: "wise", feedback: "Smart! Calm eyes find fish faster." },
+                { text: "Stomp on the ice until your feet hurt.", type: "impulse", feedback: "Now your feet hurt AND you're still hungry." },
+                { text: "Ask a friend to help chip the ice away.", type: "wise", feedback: "Teamwork! You both got to eat lunch." },
+                { text: "Yell 'THIS IS UNFAIR' at the sky.", type: "impulse", feedback: "The sky didn't answer, and now you have a sore throat." }
             ]
         }
     ];
 
     function loadGame() {
         if (currentStep >= gameData.length) {
-            winGame();
-            return;
-        }
-
-        const data = gameData[currentStep];
-        const scenarioEl = document.getElementById('scenario-text');
-        scenarioEl.innerHTML = data.scenario;
-        
-        // Add a little entrance animation to the text
-        scenarioEl.classList.remove('animate__fadeInRight');
-        void scenarioEl.offsetWidth; 
-        scenarioEl.classList.add('animate__animated', 'animate__fadeInRight');
-
-        const choiceContainer = document.getElementById('choices');
-        choiceContainer.innerHTML = "";
-
-        const shuffled = data.options.sort(() => Math.random() - 0.5);
-
-        shuffled.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = `choice-btn animate__animated animate__fadeInUp`;
-            btn.innerHTML = opt.text;
-            btn.onclick = () => handleChoice(opt);
-            choiceContainer.appendChild(btn);
-        });
-    }
-
-    function handleChoice(opt) {
-        if (opt.type === "wise") {
-            earnedCount++;
-            const m = document.getElementById(`m${earnedCount}`);
-            m.classList.add('earned');
-            
             Swal.fire({
-                title: "Marshmallow Earned! ☁️",
-                text: opt.feedback,
-                icon: "success",
-                confirmButtonColor: "#3498db"
-            }).then(() => {
-                currentStep++;
-                loadGame();
-            });
-        } else {
-            Swal.fire({
-                title: "The Impulse Trap! 🪤",
-                text: opt.feedback,
-                icon: "error",
-                confirmButtonText: "Try a Wise Mind choice",
-                confirmButtonColor: "#e74c3c"
-            });
-        }
-    }
-
-    function winGame() {
-        Swal.fire({
-            title: "VICTORY COCOA! ☕",
-            text: "You helped Polar Bear stay in his Wise Mind. Time for a treat!",
-            // Using your specific hot cocoa GIF here
-            imageUrl: 'polar_bear_gif/polar_bear_hot_choc.gif', 
-            imageWidth: 400,
-            imageAlt: 'Polar Bear with Hot Cocoa',
-            confirmButtonText: "Return to Map",
-            confirmButtonColor: "#ff9800"
-        }).then(() => {
-            window.location.href = "index.html";
-        });
-    }
-
-    createSnow();
-    loadGame();
-</script>
-</body>
-</html>        .choice-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; 
-        }
-        .choice-btn {
-            padding: 20px; border-radius: 20px; border: 3px solid #3498db;
-            background: #fff; color: #2c3e50; cursor: pointer;
-            font-size: 1.1rem; font-weight: bold; transition: 0.2s;
-            box-shadow: 0 6px #3498db; display: flex; align-items: center; justify-content: center;
-        }
-        .choice-btn:hover { background: #e1f5fe; transform: translateY(-2px); }
-        .choice-btn:active { transform: translateY(4px); box-shadow: none; }
-
-        .back-btn { margin-top: 30px; display: inline-block; color: #3498db; text-decoration: none; }
-    </style>
-</head>
-<body>
-
-<div class="container animate__animated animate__fadeIn">
-    <img src="polar_bear.jpg" id="bear-img" alt="Polar Bear">
-    <h1 style="color: #2980b9;">Polar Bear's Long-Run Lab</h1>
-
-    <div class="reward-zone">
-        <span>Cocoa Status:</span>
-        <span id="m1" class="marshmallow">☁️</span>
-        <span id="m2" class="marshmallow">☁️</span>
-        <span id="m3" class="marshmallow">☁️</span>
-        <span id="m4" class="marshmallow">☁️</span>
-        <span id="m5" class="marshmallow">☁️</span>
-    </div>
-
-    <div class="scenario-box" id="scenario-text">Loading situation...</div>
-
-    <div class="choice-grid" id="choices">
-        </div>
-</div>
-
-<a href="index.html" class="back-btn">⬅ Back to Map</a>
-
-<script>
-    let currentStep = 0;
-    let earnedCount = 0;
-
-    const gameData = [
-        {
-            scenario: "Polar Bear is building a Lego ice castle, but he can't find the very last piece. He feels his body getting tight and itchy with frustration.",
-            options: [
-                { text: "Dump the whole box on the floor to find it faster.", type: "impulse", feedback: "Now you have 500 pieces to look through instead of 50. You just made the job much harder!" },
-                { text: "Kick the castle and say 'I didn't even want to build this anyway!'", type: "impulse", feedback: "That's a 'False Thought.' You did want to build it, and now it's broken. Your morning is ruined." },
-                { text: "Take 3 deep 'North Pole' breaths and look under the rug.", type: "wise", feedback: "Found it! Staying calm kept your eyes sharp. You finished the castle!" },
-                { text: "Ask someone to help you look for 2 minutes.", type: "wise", feedback: "Great teamwork! Two sets of eyes found the piece in 10 seconds flat." }
-            ]
-        },
-        {
-            scenario: "Another bear tells a joke that makes everyone laugh, but Polar Bear doesn't think it's funny. He feels a 'Spiky' feeling in his chest.",
-            options: [
-                { text: "Tell the other bear his joke was 'babyish' and stupid.", type: "impulse", feedback: "Ouch. That made the other bear sad and now everyone thinks you're a grouch. Not a win." },
-                { text: "Just keep a quiet face and wait for the next game.", type: "wise", feedback: "Perfect. You don't have to laugh at everything, but being kind keeps the peace." },
-                { text: "Start shouting a louder joke so people listen to you instead.", type: "impulse", feedback: "Now it's just a shouting match. Everyone is annoyed by the noise." },
-                { text: "Walk to the water hole to get a drink and reset your spiky feeling.", type: "wise", feedback: "Excellent self-regulation. You handled that 'Spiky' feeling like a pro." }
-            ]
-        },
-        {
-            scenario: "Polar Bear's tablet battery dies right in the middle of his favorite game. He wants to throw it.",
-            options: [
-                { text: "Plug it in and go find a book to read while it charges.", type: "wise", feedback: "Smart! In 20 minutes, you'll have battery AND you got to read. Double win." },
-                { text: "Scream 'THIS ALWAYS HAPPENS TO ME!'", type: "impulse", feedback: "Does it always happen? Or did you just forget to charge it? Screaming won't fill the battery." },
-                { text: "Wait patiently by the charger and stare at the red light.", type: "wise", feedback: "It takes self-control to wait. You're training your brain to handle 'The Boring Middles'." },
-                { text: "Try to turn it back on 50 times in a row.", type: "impulse", feedback: "That actually drains the tiny bit of power left even faster. You're working against yourself!" }
-            ]
-        }
-    ];
-
-    function loadGame() {
-        if (currentStep >= gameData.length) {
-            winGame();
+                title: "VICTORY COCOA! ☕",
+                text: "You helped Polar Bear stay in his Wise Mind!",
+                imageUrl: 'polar_bear_gif/polar_bear_hot_choc.gif', 
+                imageWidth: 400,
+                confirmButtonText: "Return to Map",
+                confirmButtonColor: "#ff9800"
+            }).then(() => window.location.href = "index.html");
             return;
         }
 
@@ -300,54 +138,27 @@
         const choiceContainer = document.getElementById('choices');
         choiceContainer.innerHTML = "";
 
-        // Shuffle options so the 'Wise' one isn't always in the same spot
-        const shuffled = data.options.sort(() => Math.random() - 0.5);
-
-        shuffled.forEach(opt => {
+        data.options.sort(() => Math.random() - 0.5).forEach(opt => {
             const btn = document.createElement('button');
-            btn.className = `choice-btn`;
+            btn.className = `choice-btn animate__animated animate__fadeInUp`;
             btn.innerHTML = opt.text;
-            btn.onclick = () => handleChoice(opt);
+            btn.onclick = () => {
+                if (opt.type === "wise") {
+                    earnedCount++;
+                    document.getElementById(`m${earnedCount}`).classList.add('earned');
+                    Swal.fire({ title: "Marshmallow Earned! ☁️", text: opt.feedback, icon: "success" }).then(() => {
+                        currentStep++;
+                        loadGame();
+                    });
+                } else {
+                    Swal.fire({ title: "Impulse Trap! 🪤", text: opt.feedback, icon: "error" });
+                }
+            };
             choiceContainer.appendChild(btn);
         });
     }
 
-    function handleChoice(opt) {
-        if (opt.type === "wise") {
-            earnedCount++;
-            document.getElementById(`m${earnedCount}`).classList.add('earned');
-            Swal.fire({
-                title: "Wise Move! ☁️",
-                text: opt.feedback + " You earned a marshmallow!",
-                icon: "success",
-                confirmButtonColor: "#3498db"
-            }).then(() => {
-                currentStep++;
-                loadGame();
-            });
-        } else {
-            Swal.fire({
-                title: "Impulse Trap! 🪤",
-                text: opt.feedback,
-                icon: "error",
-                confirmButtonText: "Think it through again",
-                confirmButtonColor: "#e74c3c"
-            });
-        }
-    }
-
-    function winGame() {
-        Swal.fire({
-            title: "Cocoa Time! ☕",
-            text: "You collected the marshmallows and mastered the Long-Run Lab!",
-            imageUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJqZ3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif',
-            imageWidth: 300,
-            confirmButtonText: "Return to Map"
-        }).then(() => {
-            window.location.href = "index.html";
-        });
-    }
-
+    createSnow();
     loadGame();
 </script>
 </body>
