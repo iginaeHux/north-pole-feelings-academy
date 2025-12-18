@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santa's Choice Academy</title>
+    <title>Santa's Decision Lab</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
@@ -22,20 +22,20 @@
             box-shadow: 0 15px 0 #8B0000; position: relative;
         }
 
-        h1 { font-size: 2.5rem; color: #d42426; margin: 10px 0; }
-        .question-text { font-size: 1.6rem; margin: 20px 0; color: #444; line-height: 1.4; }
+        h1 { font-size: 2.8rem; color: #d42426; margin: 10px 0; }
+        .question-text { font-size: 1.6rem; margin: 20px 0; color: #444; line-height: 1.4; min-height: 80px; }
 
         /* The Slider Area */
         .slider-box {
-            position: relative; width: 100%; height: 120px; 
-            margin: 40px 0; display: flex; align-items: center;
+            position: relative; width: 100%; height: 140px; 
+            margin: 20px 0; display: flex; align-items: center;
         }
         
         .track {
-            width: 100%; height: 40px; border-radius: 20px;
+            width: 100%; height: 45px; border-radius: 25px;
             background: linear-gradient(to right, #ffeb3b, #4CAF50);
             border: 4px solid #ccc; display: flex; justify-content: space-between;
-            padding: 0 20px; align-items: center; font-size: 1.2rem;
+            padding: 0 30px; align-items: center; font-size: 1.4rem; font-weight: bold;
         }
 
         input[type="range"] {
@@ -43,35 +43,40 @@
             position: absolute; z-index: 5; outline: none;
         }
 
-        /* The actual Santa Slider Head */
+        /* The Santa Slider Head */
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 100px; width: 100px;
-            background: url('santa_character.jpg') center center / cover;
+            -webkit-appearance: none; height: 110px; width: 110px;
+            background: url('santa_image_set/silly_santa_character.jpg') center center / cover;
             border-radius: 50%; border: 5px solid #d42426; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateY(-10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateY(-5px);
+            transition: background 0.2s;
         }
 
         /* Choice Buttons */
-        .choice-label { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; display: block; }
-        .btn-group { display: flex; justify-content: center; gap: 20px; }
+        .choice-label { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; display: block; color: #d42426; }
+        .btn-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
         
         .action-btn {
-            padding: 15px 30px; font-size: 1.5rem; border-radius: 25px; cursor: pointer;
+            padding: 15px 35px; font-size: 1.6rem; border-radius: 30px; cursor: pointer;
             border: none; font-family: 'Fredoka One', cursive; color: white;
-            transition: 0.2s; min-width: 150px;
+            transition: transform 0.2s, box-shadow 0.2s; min-width: 180px;
         }
-        .silly-btn { background: #fbc02d; box-shadow: 0 6px #f57f17; }
-        .smart-btn { background: #4CAF50; box-shadow: 0 6px #2e7d32; }
+        .silly-btn { background: #fbc02d; box-shadow: 0 8px #f57f17; }
+        .smart-btn { background: #4CAF50; box-shadow: 0 8px #2e7d32; }
         .action-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        #cookie-counter { font-size: 1.5rem; margin-top: 20px; background: white; color: #333; padding: 10px 20px; border-radius: 20px; }
+        #cookie-counter { 
+            font-size: 1.5rem; margin-top: 10px; background: white; 
+            color: #333; padding: 10px 30px; border-radius: 50px; 
+            border: 3px solid #f8b229;
+        }
     </style>
 </head>
 <body>
 
     <div class="container animate__animated animate__fadeIn">
         <h1>Santa's Decision Lab</h1>
-        <p class="question-text" id="scenario-text">Loading scenario...</p>
+        <p class="question-text" id="scenario-text">Loading Santa's brain...</p>
 
         <div class="slider-box">
             <div class="track">
@@ -106,12 +111,34 @@
                 sillyReply: "💥 CRACK! The bed broke! Now Santa has to sleep on the cold floor tonight. Oh no!",
                 smartReply: "🏃‍♂️ WHOOSH! Santa did 10 big jumping jacks on the rug. Now he's calm and ready for a nap.",
                 correct: "smart"
+            },
+            {
+                q: "Santa is frustrated with the list and wants to throw it in the snow!",
+                sillyReply: "❄️ OH NO! The list is wet and the ink is running! Now we don't know who gets the LEGOs!",
+                smartReply: "📋 Phew! Santa asked an Elf for help. Working together made the job much easier.",
+                correct: "smart"
             }
         ];
 
+        const slider = document.getElementById('decision-slider');
+        
+        // Change Santa's face as the slider moves!
+        slider.addEventListener('input', function() {
+            if (this.value < 50) {
+                // Inline CSS change for the thumb image
+                document.styleSheets[0].addRule('input[type="range"]::-webkit-slider-thumb', 'background-image: url("santa_image_set/silly_santa_character.jpg") !important');
+            } else {
+                document.styleSheets[0].addRule('input[type="range"]::-webkit-slider-thumb', 'background-image: url("santa_image_set/smart_santa_character.jpg") !important');
+            }
+        });
+
         function load() {
-            document.getElementById('scenario-text').innerText = scenarios[currentIdx].q;
-            document.getElementById('decision-slider').value = 50;
+            if (currentIdx < scenarios.length) {
+                document.getElementById('scenario-text').innerText = scenarios[currentIdx].q;
+                slider.value = 50;
+            } else {
+                winGame();
+            }
         }
 
         function makeChoice(choice) {
@@ -121,8 +148,9 @@
                 Swal.fire({
                     title: "The Silly Choice!",
                     text: s.sillyReply,
-                    icon: "error",
-                    confirmButtonText: "Try to fix it?",
+                    imageUrl: 'santa_image_set/silly_santa_character.jpg',
+                    imageWidth: 150,
+                    confirmButtonText: "Let's try that again!",
                     confirmButtonColor: "#fbc02d"
                 });
             } else {
@@ -131,15 +159,27 @@
                 Swal.fire({
                     title: "The Smart Choice!",
                     text: s.smartReply,
-                    icon: "success",
+                    imageUrl: 'santa_image_set/smart_santa_character.jpg',
+                    imageWidth: 150,
                     confirmButtonText: "Next Scenario",
                     confirmButtonColor: "#4CAF50"
                 }).then(() => {
                     currentIdx++;
-                    if (currentIdx < scenarios.length) load();
-                    else Swal.fire("Academy Graduate!", "You helped Santa survive the day!", "success");
+                    load();
                 });
             }
+        }
+
+        function winGame() {
+            Swal.fire({
+                title: "North Pole Graduate!",
+                text: "You helped Santa make smart choices all day. He's ready for Christmas Eve!",
+                icon: "success",
+                confirmButtonText: "Back to Map",
+                confirmButtonColor: "#d42426"
+            }).then(() => {
+                window.location.href = "index.html";
+            });
         }
 
         load();
