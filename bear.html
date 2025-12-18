@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polar Bear's Marshmallow Challenge</title>
+    <title>Polar Bear's 8-Step Challenge</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
@@ -14,108 +14,134 @@
             color: #2c3e50; text-align: center; padding: 20px; overflow-x: hidden; min-height: 100vh;
             margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        
-        /* Snowflake layer */
         #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .snowflake { color: #fff; font-size: 1.2rem; position: absolute; top: -10%; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
-        /* Unique Container */
         .game-wrapper { 
-            position: relative; z-index: 10;
-            background: rgba(255, 255, 255, 0.95); border-radius: 40px; padding: 30px; 
-            max-width: 800px; width: 90%; border: 8px solid #3498db; 
-            box-shadow: 0 15px 0 #2980b9; margin: 20px;
+            position: relative; z-index: 10; background: rgba(255, 255, 255, 0.95); 
+            border-radius: 40px; padding: 30px; max-width: 850px; width: 95%; 
+            border: 8px solid #3498db; box-shadow: 0 15px 0 #2980b9; margin: 20px;
         }
-
-        #bear-img { width: 160px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
-        .mission-text { color: #2980b9; font-size: 1.1rem; margin-bottom: 10px; }
-
+        #bear-img { width: 150px; }
         .reward-zone { 
-            background: #fff3e0; padding: 15px; border-radius: 20px; 
-            margin: 15px 0; border: 3px dashed #ff9800; display: flex; 
-            justify-content: center; gap: 12px;
+            background: #fff3e0; padding: 15px; border-radius: 20px; margin: 15px 0; 
+            border: 3px dashed #ff9800; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
         }
         .marshmallow { 
-            font-size: 2.2rem; filter: grayscale(100%); opacity: 0.2; 
+            font-size: 2rem; filter: grayscale(100%); opacity: 0.1; 
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .marshmallow.earned { filter: grayscale(0%); opacity: 1; transform: scale(1.3) rotate(360deg); }
+        .marshmallow.earned { filter: grayscale(0%); opacity: 1; transform: scale(1.2) rotate(360deg); }
 
         .scenario-box { 
-            background: #f0f7ff; padding: 20px; border-radius: 20px; 
-            margin: 15px 0; font-size: 1.3rem; border-left: 10px solid #3498db;
-            color: #34495e; min-height: 60px;
+            background: #f0f7ff; padding: 25px; border-radius: 20px; margin: 15px 0; 
+            font-size: 1.2rem; border-left: 10px solid #3498db; color: #34495e; min-height: 80px;
         }
-        
-        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .choice-btn {
-            padding: 18px; border-radius: 20px; border: 3px solid #3498db;
-            background: #fff; color: #2c3e50; cursor: pointer;
-            font-size: 1rem; font-weight: bold; transition: 0.3s;
-            box-shadow: 0 6px #3498db; display: flex; align-items: center; justify-content: center;
+            padding: 15px; border-radius: 20px; border: 3px solid #3498db;
+            background: #fff; color: #2c3e50; cursor: pointer; font-size: 0.95rem; 
+            font-weight: bold; transition: 0.3s; box-shadow: 0 6px #3498db;
         }
-        .choice-btn:hover { background: #e1f5fe; transform: scale(1.03); }
-        .choice-btn:active { transform: translateY(4px); box-shadow: none; }
-
-        .back-btn { color: white; text-decoration: none; border-bottom: 2px solid white; z-index: 10; margin-top: 10px; }
+        .choice-btn:hover { background: #e1f5fe; transform: scale(1.02); }
+        .back-btn { color: white; text-decoration: none; border-bottom: 2px solid white; z-index: 10; }
     </style>
 </head>
 <body>
-
 <div id="snow-container"></div>
-
 <div class="game-wrapper animate__animated animate__zoomIn">
-    <img src="polar_bear.jpg" id="bear-img" class="animate__animated animate__pulse animate__infinite" alt="Polar Bear">
-    <h1 style="color: #2980b9; margin: 10px 0;">The Marshmallow Challenge</h1>
-    <p class="mission-text">Help Polar Bear keep calm for his <strong>calming cocoa!</strong></p>
-
-    <div class="reward-zone">
-        <span id="m1" class="marshmallow">☁️</span>
-        <span id="m2" class="marshmallow">☁️</span>
-        <span id="m3" class="marshmallow">☁️</span>
-    </div>
-
-    <div class="scenario-box" id="scenario-text">Loading...</div>
+    <img src="polar_bear.jpg" id="bear-img" class="animate__animated animate__pulse animate__infinite">
+    <h1 style="color: #2980b9; margin: 5px;">The 8-Step Challenge</h1>
+    <p style="color: #2980b9;">Earn 8 marshmallows for the <strong>ultimate cocoa!</strong></p>
+    <div class="reward-zone" id="marshmallow-track"></div>
+    <div class="scenario-box" id="scenario-text">Ready?</div>
     <div class="choice-grid" id="choices"></div>
 </div>
-
 <a href="index.html" class="back-btn">⬅ Back to Map</a>
 
 <script>
     let currentStep = 0;
     let earnedCount = 0;
+    const totalSteps = 8;
 
-    function createSnow() {
-        const container = document.getElementById('snow-container');
-        for (let i = 0; i < 25; i++) {
-            let snow = document.createElement('div');
-            snow.className = 'snowflake';
-            snow.innerHTML = '❄';
-            snow.style.left = Math.random() * 100 + 'vw';
-            snow.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            snow.style.opacity = Math.random();
-            container.appendChild(snow);
-        }
+    // Create the 8 empty marshmallows
+    const track = document.getElementById('marshmallow-track');
+    for(let i=1; i<=totalSteps; i++) {
+        track.innerHTML += `<span id="m${i}" class="marshmallow">☁️</span>`;
     }
 
     const gameData = [
         {
-            scenario: "The other bears are playing tag, but they forgot to ask Polar Bear. He feels 'Invisible'.",
+            scenario: "Polar Bear is playing a board game and just realized he's going to lose. He feels a hot 'surge' in his stomach.",
             options: [
-                { text: "Walk up and say: 'Hey, can I be IT next round?'", type: "wise", feedback: "Brave move! They said yes immediately." },
-                { text: "Sit behind a rock and wait for them to notice.", type: "impulse", feedback: "They're busy playing; they might not see you. You're just cold now." },
-                { text: "Do a big stretch and remember: 'I am fun to play with.'", type: "wise", feedback: "Self-talk is a superpower. You felt better and joined in!" },
-                { text: "Think: 'They are mean and I hate this game.'", type: "impulse", feedback: "That 'Spiky Thought' makes you feel worse, not better." }
+                { text: "Flip the board and say the game is boring anyway.", type: "impulse", feedback: "Now nobody wants to play with you, and you have a mess to clean up. Double loss." },
+                { text: "Take a breath and say 'Good game' to the winner.", type: "wise", feedback: "Being a 'Good Sport' makes people want to play with you again tomorrow. Long-run win!" },
+                { text: "Accuse the other player of cheating so the win doesn't count.", type: "impulse", feedback: "That's an 'Unfair Thought.' It ruins the fun for everyone, including you." },
+                { text: "Remind yourself: 'It's just a game, I'll try a new strategy next time.'", type: "wise", feedback: "That's a Growth Mindset! Your brain just got stronger." }
             ]
         },
         {
-            scenario: "Polar Bear's favorite ice-fishing hole is frozen shut! He's hungry and 'angry heat' is rising.",
+            scenario: "The teacher bear is giving a long, boring speech. Polar Bear wants to poke the bear sitting next to him.",
             options: [
-                { text: "Take 5 slow breaths and look for a new hole.", type: "wise", feedback: "Smart! Calm eyes find fish faster." },
-                { text: "Stomp on the ice until your feet hurt.", type: "impulse", feedback: "Now your feet hurt AND you're still hungry." },
-                { text: "Ask a friend to help chip the ice away.", type: "wise", feedback: "Teamwork! You both got to eat lunch." },
-                { text: "Yell 'THIS IS UNFAIR' at the sky.", type: "impulse", feedback: "The sky didn't answer, and now you have a sore throat." }
+                { text: "Poke them! It'll be funny and break the boredom.", type: "impulse", feedback: "You got in trouble and missed the instructions. Now you're bored AND behind." },
+                { text: "Imagine your hands are made of heavy stone so they stay still.", type: "wise", feedback: "Great visualization tool! You stayed in control of your 'Right-Now' body." },
+                { text: "Start humming loudly to entertain yourself.", type: "impulse", feedback: "Now the whole class is distracted and the teacher is looking right at you. Oops." },
+                { text: "Fidget quietly with a small piece of ice under your desk.", type: "wise", feedback: "Smart. A 'Quiet Fidget' helps your brain focus without causing a scene." }
+            ]
+        },
+        {
+            scenario: "Polar Bear's mom said 'No' to an extra fish for dessert. He feels like screaming.",
+            options: [
+                { text: "Scream and stomp your way to the back of the cave.", type: "impulse", feedback: "Now you're in a 'Time Out' and you still don't have the fish. High cost, zero gain." },
+                { text: "Say 'Okay' and go play with your toys instead.", type: "wise", feedback: "Accepting a 'No' is a high-level skill. You're showing you're a big bear now!" },
+                { text: "Sneak into the fish-storage when she isn't looking.", type: "impulse", feedback: "That's a 'Sneaky Impulse.' When you get caught, the 'No' will last a lot longer." },
+                { text: "Ask: 'Can I have two fish tomorrow if I help clean the cave?'", type: "wise", feedback: "Excellent negotiation! You traded a 'Right-Now' want for a 'Long-Run' bonus." }
+            ]
+        },
+        {
+            scenario: "A friend bear accidentally broke Polar Bear's favorite ice-sculpture. Polar Bear is SHAKING with anger.",
+            options: [
+                { text: "Break one of their toys so it's even.", type: "impulse", feedback: "Revenge feels good for a second, but now you lost a sculpture AND a friend." },
+                { text: "Walk away until your body stops shaking.", type: "wise", feedback: "Safety first! Walking away kept you from doing something you'd regret later." },
+                { text: "Yell 'You did that on purpose!'", type: "impulse", feedback: "Was it on purpose? Accusing friends when you're mad usually makes things worse." },
+                { text: "Say: 'I'm really mad, but I know it was an accident.'", type: "wise", feedback: "Labeling the feeling and the facts. You are a master of logic!" }
+            ]
+        },
+        {
+            scenario: "Polar Bear is trying a new slide, but it looks really high. He feels 'Butterflies' in his tummy.",
+            options: [
+                { text: "Run away and tell everyone the slide is for babies.", type: "impulse", feedback: "You're hiding your fear with an 'Angry Shield.' Now you missed out on the fun." },
+                { text: "Watch a friend go first to see how it works.", type: "wise", feedback: "Observing is a great way to calm the butterflies. Knowledge is power!" },
+                { text: "Close your eyes and push yourself off immediately.", type: "impulse", feedback: "That's a 'Danger Impulse.' It's better to be ready than just reckless." },
+                { text: "Tell a grown-up: 'I'm a little nervous, can you stand at the bottom?'", type: "wise", feedback: "Asking for support is a Wise Mind move. You're conquering the height safely!" }
+            ]
+        },
+        {
+            scenario: "Polar Bear is told he has to wait 10 minutes for his turn on the sled. 10 minutes feels like 10 HOURS.",
+            options: [
+                { text: "Cut in line when the bigger bears aren't looking.", type: "impulse", feedback: "You got caught and now you're banned from the sled for the whole day." },
+                { text: "Sing a song in your head to make the time go faster.", type: "wise", feedback: "Using an 'Internal Tool' to fight boredom. You're a time-traveler!" },
+                { text: "Complain 'Is it my turn yet?' every 30 seconds.", type: "impulse", feedback: "This actually makes the time feel slower for you and everyone else." },
+                { text: "Set a 'Check-In' goal: 'I'll count 100 snowflakes while I wait.'", type: "wise", feedback: "Giving your brain a job makes the wait feel like a game. Smart!" }
+            ]
+        },
+        {
+            scenario: "Someone calls Polar Bear a name on the playground. He feels a 'Sting' in his heart.",
+            options: [
+                { text: "Call them a meaner name back.", type: "impulse", feedback: "Now you're both being mean, and the teacher can't tell who started it. You both lose." },
+                { text: "Think: 'Their words don't change who I am.'", type: "wise", feedback: "The 'Mental Shield' approach. You kept your peace and stayed strong." },
+                { text: "Go home and cry without telling anyone why.", type: "impulse", feedback: "Keeping it inside lets the 'Sting' grow. It's better to process it." },
+                { text: "Walk to a different part of the playground to find better friends.", type: "wise", feedback: "You chose a better environment. That's a high-level Long-Run win." }
+            ]
+        },
+        {
+            scenario: "It's time to stop playing and go to bed. Polar Bear wants 'just 5 more minutes' forever.",
+            options: [
+                { text: "Hide under the bed so nobody can find you.", type: "impulse", feedback: "You're just delaying the inevitable. Now you'll be tired AND in trouble tomorrow." },
+                { text: "Do a 'Transition Task': race to see how fast you can put on PJs.", type: "wise", feedback: "Turning a boring chore into a game. You won at bedtime!" },
+                { text: "Cry and say 'You're the meanest parents ever!'", type: "impulse", feedback: "That's an 'Impulse Lie.' You know they aren't mean, you're just tired." },
+                { text: "Think about the cool dreams you're going to have.", type: "wise", feedback: "Focusing on the 'Future Good' makes the 'Right-Now' transition easier." }
             ]
         }
     ];
@@ -123,8 +149,8 @@
     function loadGame() {
         if (currentStep >= gameData.length) {
             Swal.fire({
-                title: "VICTORY COCOA! ☕",
-                text: "You helped Polar Bear stay in his Wise Mind!",
+                title: "ULTIMATE COCOA ACHIEVED! ☕",
+                text: "8/8 Marshmallows! You mastered the Long-Run Lab.",
                 imageUrl: 'polar_bear_gif/polar_bear_hot_choc.gif', 
                 imageWidth: 400,
                 confirmButtonText: "Return to Map",
@@ -134,7 +160,7 @@
         }
 
         const data = gameData[currentStep];
-        document.getElementById('scenario-text').innerHTML = data.scenario;
+        document.getElementById('scenario-text').innerHTML = `Step ${currentStep + 1}: ${data.scenario}`;
         const choiceContainer = document.getElementById('choices');
         choiceContainer.innerHTML = "";
 
@@ -151,11 +177,24 @@
                         loadGame();
                     });
                 } else {
-                    Swal.fire({ title: "Impulse Trap! 🪤", text: opt.feedback, icon: "error" });
+                    Swal.fire({ title: "Impulse Trap! 🪤", text: opt.feedback, icon: "error", confirmButtonText: "Think it through..." });
                 }
             };
             choiceContainer.appendChild(btn);
         });
+    }
+
+    function createSnow() {
+        const container = document.getElementById('snow-container');
+        for (let i = 0; i < 30; i++) {
+            let snow = document.createElement('div');
+            snow.className = 'snowflake';
+            snow.innerHTML = '❄';
+            snow.style.left = Math.random() * 100 + 'vw';
+            snow.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            snow.style.opacity = Math.random();
+            container.appendChild(snow);
+        }
     }
 
     createSnow();
